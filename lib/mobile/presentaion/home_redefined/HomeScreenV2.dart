@@ -148,7 +148,7 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                         child: const Center(
                             child: ListTile(
                                 leading: Icon(Icons.flag),
-                                title: Text('Participate in Events'))),
+                                title: Text('Upcoming Events'))),
                       ),
                     ),
                   ),
@@ -165,7 +165,8 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                           // ),
                           borderRadius: BorderRadius.circular(25)),
                       height: 80,
-                      child: Center(child: Icon(Icons.payment)
+                      child: const Center(child: Text('Participate in Events')
+                          // Icon(Icons.payment)
                           //  Text('Event')
                           ),
                     ),
@@ -184,7 +185,14 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                               Theme.of(context).colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(25)),
                       height: 80,
-                      child: const Center(child: Text('Event')),
+                      child: Center(
+                          child: IconButton(
+                        icon: const Icon(
+                          Icons.monetization_on,
+                          size: 30,
+                        ),
+                        onPressed: () {},
+                      )),
                     ),
                   ),
                   const SizedBox(
@@ -200,7 +208,7 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                       child: const Center(
                           child: ListTile(
                               leading: Icon(Icons.money),
-                              title: Text('Donations You Made'))),
+                              title: Text('Pending Payment'))),
                     ),
                   )
                 ],
@@ -220,7 +228,7 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                       child: const Center(
                           child: ListTile(
                               leading: Icon(Icons.alarm),
-                              title: Text('Upcoming Events'))),
+                              title: Text('My Family Tree'))),
                     ),
                   ),
                   const SizedBox(
@@ -233,7 +241,14 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                               Theme.of(context).colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(25)),
                       height: 80,
-                      child: const Center(child: Text('Event')),
+                      child: Center(
+                          child: IconButton(
+                        icon: const Icon(
+                          Icons.message,
+                          size: 30,
+                        ),
+                        onPressed: () {},
+                      )),
                     ),
                   )
                 ],
