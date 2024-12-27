@@ -188,7 +188,7 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                       child: Center(
                           child: IconButton(
                         icon: const Icon(
-                          Icons.monetization_on,
+                          Icons.volunteer_activism,
                           size: 30,
                         ),
                         onPressed: () {},
