@@ -8,9 +8,9 @@ import '../dtos/userInfoDto.dart';
 
 
 class GetRegisterRepository {
-  Future<UserInfoResult> getRegister(String str) async {
+  Future<UserInfoResult> getRegister(String str, int uniqueId) async {
     final response = await ApiManager.get(
-      ApiConstant.getRegister + '?Id=' + str,
+      ApiConstant.getRegister + '?Id=' + str + '&Unique_Id='+uniqueId.toString(),
     );
     final data = UserInfoResult.fromJson(response);
     return data;

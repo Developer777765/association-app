@@ -102,6 +102,9 @@ class _DashoardWebMenuState extends ConsumerState<DashoardWebMenu> {
               _showSidebar = false;
             });
           }),
+          _buildMenuItem(Icons.home, 'Aprove Prorile', onTap: () {
+            
+          }),
         ],
       ),
     );

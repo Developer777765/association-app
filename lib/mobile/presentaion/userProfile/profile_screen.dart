@@ -4,9 +4,16 @@ import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temple_app/common_widget/apptheme.dart';
 import 'package:temple_app/data/data_sourse/hive/profile_adapter.dart';
+import 'package:temple_app/data/dtos/get_img_dto.dart';
+import 'package:temple_app/data/dtos/get_img_res_dto.dart';
 import 'package:temple_app/data/repository/get_register_repository.dart';
+import 'package:temple_app/data/repository/login_repository.dart';
 import 'package:temple_app/mobile/presentaion/login/login_screen.dart';
 import 'package:temple_app/mobile/presentaion/successScreen/state_of_screen.dart';
+
+final imageUrlProvider = StateProvider<String>((ref) {
+  return '';
+});
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -17,9 +24,40 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // initMethod();
+  }
+
+  initMethod() async {
+    var user = Hive.box<UserProfile>('UserProfileBox');
+    var userProfile = user.getAt(0);
+    String picture = userProfile!.profilePic!.toString();
+    GetImgReqDto req = GetImgReqDto(
+        uniqueId: userProfile.profilePic!.toString(),
+        companyId: 1046,
+        category: 'picture',
+        keyId: 15);
+
+    GetImgResDto result = await ref.read(getImageProvider(req.toJson()).future);
+    String imgaeUrl = result.result.docUrl;
+    debugPrint('the picture is $picture');
+    ref.read(imageUrlProvider.notifier).state = imgaeUrl;
+  }
+
+  var req = GetImgReqDto(
+          uniqueId: 'DMS_8dd3b0c1201d41d',
+          companyId: 1046,
+          category: 'picture',
+          keyId: 15)
+      .toJson();
+
+  @override
   build(context) {
     var user = Hive.box<UserProfile>('UserProfileBox');
     var userProfile = user.getAt(0);
+    var picture = userProfile!.uniqueId;
     return WillPopScope(
       onWillPop: () async {
         Navigator.popAndPushNamed(context, 'HomeScreen');
@@ -95,17 +133,53 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        CircleAvatar(
-                          radius: 50,
-                          child: Text(
-                            userProfile!.name!.substring(0, 1),
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 30),
-                          ),
+                        FutureBuilder(
+                          future: getImageUrl(),
+                          builder: (context, snapShot) {
+                            if (snapShot.hasError) {
+                              return const Center(child: Icon(Icons.error));
+                            } else if (snapShot.hasData) {
+                              return CircleAvatar(
+                                  radius: 50,
+                                  child: CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage:
+                                        NetworkImage(snapShot.data!),
+                                  ));
+                            } else if (snapShot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: Text('Loading..'),
+                              );
+                            } else {
+                              return const Text('something went wrong');
+                            }
+                          },
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        // CircleAvatar(
+                        //     radius: 50,
+                        //     // backgroundImage: NetworkImage(
+                        //     //   ref.read(imageUrlProvider),
+                        //     // )
+                        //     child: ref.watch(getImageProvider(req)).when(
+                        //         data: (data) {
+                        //       return CircleAvatar(
+                        //         radius: 50,
+                        //         backgroundImage: NetworkImage(
+                        //           data.result.docUrl,
+                        //         ),
+                        //       );
+                        //     }, error: (obj, er) {
+                        //       return Text(
+                        //         userProfile.name!.substring(0, 1),
+                        //         style: const TextStyle(
+                        //             fontWeight: FontWeight.bold, fontSize: 30),
+                        //       );
+                        //     }, loading: () {
+                        //       debugPrint('the image is not determined');
+                        //       return const SizedBox();
+                        //     })),
+                        const Spacer(),
                         Text(
                           'Hello, ${userProfile.name}!',
                           style: const TextStyle(
@@ -126,9 +200,6 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 30,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -167,7 +238,8 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
                           title: Text(
-                            userProfile.fatherPhNo! == 'strng'
+                            userProfile.fatherPhNo! == 'strng' ||
+                                    userProfile.fatherPhNo == null
                                 ? 'Parent\'s No (not provided)'
                                 : '${userProfile.fatherPhNo} (Parent\'s)',
                             style: const TextStyle(fontSize: 18),
@@ -182,7 +254,8 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
                           title: Text(
-                            userProfile.spousePhNo!.isEmpty
+                            userProfile.spousePhNo!.isEmpty ||
+                                    userProfile.spousePhNo == null
                                 ? 'Wife\'s No (not provided)'
                                 : '${userProfile.spousePhNo} (Wife\'s)',
                             style: const TextStyle(fontSize: 18),
@@ -277,6 +350,20 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Future<String> getImageUrl() async {
+    var user = Hive.box<UserProfile>('UserProfileBox');
+    var userProfile = user.getAt(0);
+    var req = GetImgReqDto(
+            // uniqueId: 'DMS_8dd3b0c1201d41d',
+            uniqueId: userProfile!.profilePic!,
+            companyId: 1046,
+            category: 'picture',
+            keyId: 15)
+        .toJson();
+    GetImgResDto result = await ref.read(getImageProvider(req).future);
+    return result.result.docUrl;
+  }
+
   showCustomDialog() {
     showDialog(
       barrierDismissible: false,
@@ -301,3 +388,30 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 }
+
+//$$$$$$$$$$$$$$$$$$ photo viewer $$$$$$$$$$$$$$$$$$
+
+class DetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Hero(
+            tag: 'imageHero',
+            child: Image.network(
+              'https://picsum.photos/250?image=9',
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
+}
+
+//$$$$$$$$$$$$$$$$$$ photo viewer $$$$$$$$$$$$$$$$$$

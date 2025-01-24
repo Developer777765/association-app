@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temple_app/mobile/presentaion/home_redefined/testScreen.dart';
 
 // ignore: must_be_immutable
 class Donation extends StatelessWidget {
@@ -76,7 +77,16 @@ class Donation extends StatelessWidget {
               ),
               Row(children: [
                 const Spacer(),
-                ElevatedButton(onPressed: () {}, child: const Text('Donate'))
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return TestScreen(
+                          nameOfScreen: event,
+                        );
+                      }));
+                    },
+                    child: const Text('Donate'))
               ]),
             ],
           ),

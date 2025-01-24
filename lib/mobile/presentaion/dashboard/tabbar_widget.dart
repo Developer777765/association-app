@@ -30,7 +30,7 @@ class _TabbarWidgetState extends ConsumerState<TabbarWidget> {
 
     ProfileScreen(),
     Text(
-      'More',
+      'Under Implementation',
       style: optionStyle,
     ),
   ];
@@ -45,7 +45,7 @@ class _TabbarWidgetState extends ConsumerState<TabbarWidget> {
         padding: const EdgeInsets.only(top: 8.0),
         // color: Theme.of(context).colorScheme.primaryContainer,
         decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-        height: MediaQuery.of(context).size.height * 0.07,
+        height: MediaQuery.of(context).size.height * 0.085,
         width: MediaQuery.of(context).size.width,
         child: Row(
           children: [

@@ -21,16 +21,18 @@ class Button extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.primaryContainer,
-                Theme.of(context).colorScheme.secondaryContainer
-                // AppTheme.primayColor,
-                // const Color.fromARGB(255, 65, 102, 133),
-              ],
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-            )),
+            color: Theme.of(context).colorScheme.primaryContainer
+            // gradient: LinearGradient(
+            //   colors: [
+            //     Theme.of(context).colorScheme.primaryContainer,
+            //     Theme.of(context).colorScheme.secondaryContainer
+            //     // AppTheme.primayColor,
+            //     // const Color.fromARGB(255, 65, 102, 133),
+            //   ],
+            //   begin: Alignment.centerRight,
+            //   end: Alignment.centerLeft,
+            // )
+            ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,

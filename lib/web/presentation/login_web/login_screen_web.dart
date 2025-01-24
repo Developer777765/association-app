@@ -9,6 +9,7 @@ import 'package:temple_app/common_widget/apptheme.dart';
 import 'package:temple_app/common_widget/responsive_widget.dart';
 import 'package:temple_app/mobile/presentaion/login/verify_otp.dart';
 import 'package:temple_app/mobile/presentaion/signUpUser/signUpUser.dart';
+import 'package:temple_app/mobile/presentaion/splash/splash_screen.dart';
 import 'package:temple_app/src/core/assets/assets.gen.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../../../common_widget/button.dart';
@@ -95,8 +96,8 @@ class _LoginScreenState extends ConsumerState<LoginScreenWeb> {
                 Preference.USER_ID, result.verifyOtpResult!.userId.toString());
             final userID = Preference.shared.getString(Preference.USER_ID);
             ref.read(userIdProvider.notifier).update((state) => userID);
-            final userdetails =
-                await GetRegisterRepository().getRegister(userID!);
+            final userdetails = await GetRegisterRepository()
+                .getRegister(userID!, ref.read(companyId));
             await Preference.shared.setString(
                 Preference.USER_NAME, userdetails.result!.name.toString());
             ref.read(profileProvider.notifier).state =

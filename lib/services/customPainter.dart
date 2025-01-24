@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
 
 class CustomPainterOf extends CustomPainter {
-  final Color color;
-  final double controlPoint1X;
-  final double controlPoint2X;
-  final double waveHeight;
-
-  CustomPainterOf({
-    required this.color,
-    required this.controlPoint1X,
-    required this.controlPoint2X,
-    required this.waveHeight,
-  });
   @override
-  void paint(Canvas canva, Size size) {
-    var paint = Paint()
-      ..color = color
-      ..strokeWidth = 15;
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.white.withOpacity(0.2)
+      ..style = PaintingStyle.fill;
 
-    var path = Path();
-
-    path.moveTo(0, size.height * 0.7);
-    path.quadraticBezierTo(
-      size.width * controlPoint1X,
-      size.height * waveHeight,
-      size.width * 0.5,
-      size.height * 0.8,
-    );
-    path.quadraticBezierTo(
-      size.width * controlPoint2X,
-      size.height * 0.9,
-      size.width,
-      size.height * 0.8,
-    );
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
+    final Path path = Path();
+    path.moveTo(size.width, size.height * 0.2);
+    // path.quadraticBezierTo(
+    //   size.width * 0.75, // Control point X (adjust this for curvature)
+    //   size.height *
+    //       0.1, // Control point Y (move this closer to the triangle point)
+    //   size.width / 3, // End point X (middle point)
+    //   size.height * 0.5, // End point Y (triangle base near logo)
+    // );
+    path.lineTo(size.width / 2.5, size.height / 2);
+    path.lineTo(size.width, size.height * 0.8);
+    // path.lineTo(size.width, size.height * 0.3);
     path.close();
 
-    canva.drawPath(path, paint);
+    canvas.drawPath(path, paint);
   }
 
   @override

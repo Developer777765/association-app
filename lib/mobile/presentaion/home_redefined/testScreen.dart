@@ -1,88 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocode/geocode.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:temple_app/data/repository/login_repository.dart';
 
 class TestScreen extends ConsumerStatefulWidget {
+  String? nameOfScreen;
+  TestScreen({required this.nameOfScreen});
   @override
   createState() => TestScreenState();
 }
 
 class TestScreenState extends ConsumerState<TestScreen> {
+  GeoCode geoCode = GeoCode();
   @override
   build(context) {
     return Scaffold(
-      body: const Center(
-        child: Text('Nothing'),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(top: 8.0),
-        color: Colors.amber,
-        height: MediaQuery.of(context).size.height * 0.07,
-        width: MediaQuery.of(context).size.width,
-        child: Row(
-          children: [
-            Expanded(
-              child: SizedBox(
-                  height: double.infinity - 50,
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.home,
-                        ),
-                      ),
-                      const Text('Home')
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: SizedBox(
-                  height: double.infinity - 50,
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.home,
-                        ),
-                      ),
-                      const Text('Home')
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: SizedBox(
-                  height: double.infinity - 50,
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.home,
-                        ),
-                      ),
-                      const Text('Home')
-                    ],
-                  )),
-            ),
-            Expanded(
-              child: SizedBox(
-                  height: double.infinity - 50,
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: const Icon(
-                          Icons.home,
-                        ),
-                      ),
-                      const Text('Home')
-                    ],
-                  )),
-            ),
-          ],
+        appBar: AppBar(
+          title: Text(widget.nameOfScreen!),
+          automaticallyImplyLeading: false,
         ),
-      ),
-    );
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Center(child: Text('')),
+          ),
+        ));
   }
 }

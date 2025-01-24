@@ -9,6 +9,7 @@ import 'package:temple_app/data/dtos/verify_otp_req.dart';
 import 'package:temple_app/data/repository/login_repository.dart';
 import 'package:temple_app/mobile/presentaion/login/login_screen.dart';
 import 'package:temple_app/mobile/presentaion/signUpUser/signUpUser.dart';
+import 'package:temple_app/mobile/presentaion/splash/splash_screen.dart';
 import '../../../common_widget/apptheme.dart';
 import '../../../common_widget/button.dart';
 import '../../../data/repository/get_register_repository.dart';
@@ -329,7 +330,7 @@ class _VerifyOTPState extends ConsumerState<VerifyOTP> {
             final userID = Preference.shared.getString(Preference.USER_ID);
             ref.read(userIdProvider.notifier).update((state) => userID);
             final userdetails =
-                await GetRegisterRepository().getRegister(userID!);
+                await GetRegisterRepository().getRegister(userID!, ref.read(companyId));
             //************************ */
             await Preference.shared.setString(
                 Preference.USER_NAME, userdetails.result!.name.toString());
@@ -337,6 +338,7 @@ class _VerifyOTPState extends ConsumerState<VerifyOTP> {
             //trial code for storing data offline/local storage
             var profileBox = Hive.box<UserProfile>('userProfileBox');
             var userProfile = UserProfile(
+              id: userdetails.result!.id,
                 name: userdetails.result!.name,
                 sex: userdetails.result!.sex,
                 address: userdetails.result!.address,
@@ -345,7 +347,10 @@ class _VerifyOTPState extends ConsumerState<VerifyOTP> {
                 fatherPhNo: userdetails.result!.fatherPhNo,
                 maritalStatus: userdetails.result!.maritalStatus,
                 phno: userdetails.result!.phno,
-                spousePhNo: userdetails.result!.spousePhNo);
+                spousePhNo: userdetails.result!.spousePhNo,
+                profilePic: userdetails.result!.profilePic,
+                uniqueId: userdetails.result!.uniqueId
+                );
             await profileBox.add(userProfile);
             //trial code for storing data offline/local storage
             Navigator.popAndPushNamed(context, 'HomeScreen');

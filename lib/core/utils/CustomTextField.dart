@@ -4,9 +4,27 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
+import 'package:temple_app/data/repository/login_repository.dart';
 
 final userDataProvider = StateProvider<Map>((ref) {
   return {};
+});
+
+final citiesProvider = StateProvider<List>((ref) {
+  return [];
+});
+
+final cityProvider = StateProvider<String>((ref) {
+  return 'Town/City, Block, District,';
+});
+
+final countryProvider = StateProvider<String>((ref) {
+  return 'Country';
+});
+
+final nameOfStateProvider = StateProvider<String>((ref) {
+  return 'State';
 });
 
 class CustomTextField extends ConsumerStatefulWidget {
@@ -68,6 +86,24 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: TextFormField(
+            onChanged: (val) async {
+              if (widget.label == 'PinCode') {
+                if (val.length == 6) {
+                  var result =
+                      await LoginRepository().getPostalCodeDetails(val);
+
+                  List postOffices = result['PostOffice'];
+                  var cities = List.generate(postOffices.length, (index) {
+                    return '${postOffices[index]['Name']}, ${postOffices[index]['Taluk']}, ${postOffices[index]['District']}';
+                  }, growable: true);
+                  ref.read(citiesProvider.notifier).state = cities;
+                  var state = result['PostOffice'][0]['State'];
+                  var country = result['PostOffice'][0]['Country'];
+                  ref.read(nameOfStateProvider.notifier).state = state;
+                  ref.read(countryProvider.notifier).state = country;
+                }
+              }
+            },
             onTap: () async {
               if (widget.isFieldNotEditable!) {
                 pickedDate = await showDatePicker(
@@ -168,6 +204,26 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
                   } catch (e) {
                     debugPrint('the exception is $e');
                     return 'Enter a valid ${widget.label}'; // Parsing failed
+                  }
+                } else if (widget.label == 'PinCode') {
+                  if (val.length == 6) {
+                    ref.read(userDataProvider.notifier).state = {
+                      ...currentData,
+                      widget.label: val
+                    };
+                    return null;
+                  } else {
+                    return 'Enter a valid ${widget.label}';
+                  }
+                } else if (widget.label == 'House no.,Street name,') {
+                  if (val.length > 5) {
+                    ref.read(userDataProvider.notifier).state = {
+                      ...currentData,
+                      widget.label: val
+                    };
+                    return null;
+                  } else {
+                    return 'Enter a valid address';
                   }
                 } else {
                   ref.read(userDataProvider.notifier).state = {

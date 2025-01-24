@@ -83,11 +83,13 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
   build(context) {
     List<Widget> donateItems = List.generate(5, (index) {
       return Donation(
-          event: 'Event ${index + 1}',
-          subtitleOfEvent: 'Subtitle of Event ${index + 1}',
-          descriptionOfEvent:
-              ' Description of Event ${index + 1} in in more detailed way which explains what this event is about, when it is gonna take place, where it is gonna take place, how much this event costs and so on. With this, anyone who has registered profilfe can view this event and even donate for it if he/she wishes. ',
-          image: images[index]);
+        event: 'Event ${index + 1}',
+        subtitleOfEvent: 'Subtitle of Event ${index + 1}',
+        descriptionOfEvent:
+            ' Description of Event ${index + 1} in in more detailed way which explains what this event is about, when it is gonna take place, where it is gonna take place, how much this event costs and so on. With this, anyone who has registered profilfe can view this event and even donate for it if he/she wishes. ',
+        // image: images[index]
+        image: 'assets/images/placeHolder.jpeg',
+      );
     });
     DateTime currentTime = DateTime.now();
     String formattedDate = DateFormat('E, d MMM').format(currentTime);
@@ -124,7 +126,9 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return TestScreen();
+                        return TestScreen(
+                          nameOfScreen: 'Notifications',
+                        );
                       }));
                     },
                   )
@@ -137,7 +141,9 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                   Expanded(
                     flex: 2,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        navigateTo('Upcoming Events');
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                             // color: const Color(0xFFF88906),
@@ -165,8 +171,18 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                           // ),
                           borderRadius: BorderRadius.circular(25)),
                       height: 80,
-                      child: const Center(child: Text('Participate in Events')
-                          // Icon(Icons.payment)
+                      child: Center(
+                          child:
+                              // Text('Participate in Events')
+                              IconButton(
+                        icon: const Icon(
+                          Icons.event_note,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          navigateTo('Rent Out or Book');
+                        },
+                      )
                           //  Text('Event')
                           ),
                     ),
@@ -191,7 +207,9 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                           Icons.volunteer_activism,
                           size: 30,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          navigateTo('Donations you made');
+                        },
                       )),
                     ),
                   ),
@@ -200,15 +218,21 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                   ),
                   Expanded(
                     flex: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(25)),
-                      height: 80,
-                      child: const Center(
-                          child: ListTile(
-                              leading: Icon(Icons.money),
-                              title: Text('Pending Payment'))),
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateTo('Pending Payment');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(25)),
+                        height: 80,
+                        child: const Center(
+                            child: ListTile(
+                                leading: Icon(Icons.money),
+                                title: Text('Pending Payment'))),
+                      ),
                     ),
                   )
                 ],
@@ -220,15 +244,21 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(25)),
-                      height: 80,
-                      child: const Center(
-                          child: ListTile(
-                              leading: Icon(Icons.alarm),
-                              title: Text('My Family Tree'))),
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateTo('My Family');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(25)),
+                        height: 80,
+                        child: const Center(
+                            child: ListTile(
+                                leading: Icon(Icons.account_tree),
+                                title: Text('My Family Tree'))),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -247,7 +277,9 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                           Icons.message,
                           size: 30,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          navigateTo('Feedback');
+                        },
                       )),
                     ),
                   )
@@ -262,65 +294,77 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                 height: 15,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.33,
+                height: MediaQuery.of(context).size.height * 0.35,
                 child: ListView.separated(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                      return SizedBox(
-                        height: 400,
-                        width: 200,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                images[index],
-                                fit: BoxFit.cover,
-                                height: 200,
-                                width: 200,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 7,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 1.0),
-                                        child: Text(
-                                          'Event ${index + 1}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 1.0),
-                                        child: Text(
-                                          'Subtitle of event ${index + 1}',
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                      return GestureDetector(
+                        onTap: () {
+                          navigateTo('Event ${index + 1}');
+                        },
+                        child: SizedBox(
+                          // height: 400,
+                          // width: 200,
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  // images[index],
+                                  'assets/images/placeHolder.jpeg',
+                                  fit: BoxFit.cover,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.25,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  // height: 200,
+                                  // width: 200,
                                 ),
-                              ],
-                            ),
-                            const Spacer()
-                          ],
+                              ),
+                              const SizedBox(
+                                height: 7,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 1.0),
+                                          child: Text(
+                                            'Event ${index + 1}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 1.0),
+                                          child: Text(
+                                            'Subtitle of event ${index + 1}',
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                                color: Colors.grey),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer()
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -398,22 +442,25 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                   children: [
                     Expanded(
                         child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        navigateTo('Event Expenses');
+                      },
                       child: Container(
                         height: double.infinity,
                         decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
                             image: const DecorationImage(
-                                fit: BoxFit.cover,
+                                // fit: BoxFit.cover,
                                 image: AssetImage(
-                                  'assets/images/race.jpeg',
-                                )),
+                                    // 'assets/images/race.jpeg',
+                                    'assets/images/placeHolder.jpeg')),
                             borderRadius: BorderRadius.circular(15)),
                         child: const Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              'Event Expenses Report',
+                              'Event Expenses',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 // color: Colors.white
@@ -428,22 +475,25 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                     ),
                     Expanded(
                         child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        navigateTo('Donations');
+                      },
                       child: Container(
                         height: double.infinity,
                         decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
                             image: const DecorationImage(
-                                fit: BoxFit.cover,
+                                // fit: BoxFit.cover,
                                 image: AssetImage(
-                                  'assets/images/donationImage.jpg',
-                                )),
+                                    // 'assets/images/donationImage.jpg',
+                                    'assets/images/placeHolder.jpeg')),
                             borderRadius: BorderRadius.circular(15)),
                         child: const Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              'Donation Report',
+                              'Donations',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 // color: Colors.white
@@ -458,22 +508,25 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                     ),
                     Expanded(
                         child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        navigateTo('Participants and Winners');
+                      },
                       child: Container(
                         height: double.infinity,
                         decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
                             image: const DecorationImage(
-                                fit: BoxFit.cover,
+                                // fit: BoxFit.cover,
                                 image: AssetImage(
-                                  'assets/images/race.jpeg',
-                                )),
+                                    // 'assets/images/race.jpeg',
+                                    'assets/images/placeHolder.jpeg')),
                             borderRadius: BorderRadius.circular(15)),
                         child: const Align(
                           alignment: Alignment.bottomCenter,
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Text(
-                              'Event Expenses Report',
+                              'Participants and Winners',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 // color: Colors.white
@@ -589,5 +642,11 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
         ),
       ),
     );
+  }
+
+  navigateTo(String nameOfScreen) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return TestScreen(nameOfScreen: nameOfScreen);
+    }));
   }
 }

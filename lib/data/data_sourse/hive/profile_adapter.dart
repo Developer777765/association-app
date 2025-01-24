@@ -8,5 +8,21 @@ class UserProfile {
   final String? fatherPhNo;
   final String? email;
   final bool? maritalStatus;
-  UserProfile({this.name, this.sex, this.dob, this.address, this.phno, this.spousePhNo, this.fatherPhNo, this.email, this.maritalStatus});
+  final int? id;
+  final String? profilePic;
+  final int? uniqueId;
+  UserProfile(
+      {this.name,
+      this.sex,
+      this.dob,
+      this.address,
+      this.phno,
+      this.spousePhNo,
+      this.fatherPhNo,
+      this.email,
+      this.maritalStatus,
+      this.id,
+      this.profilePic,
+      this.uniqueId
+      });
 }

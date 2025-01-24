@@ -16,6 +16,8 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
     final String? fatherPhNo = reader.readString();
     final String? email = reader.readString();
     final bool? maritalStatus = reader.readBool();
+    final String? profilePic = reader.readString();
+    final int? uniqueId = reader.readInt();
 
     return UserProfile(
         name: name,
@@ -26,7 +28,9 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
         spousePhNo: spousePhNo,
         fatherPhNo: fatherPhNo,
         email: email,
-        maritalStatus: maritalStatus);
+        maritalStatus: maritalStatus,
+        profilePic: profilePic,
+        uniqueId: uniqueId);
   }
 
   @override
@@ -40,5 +44,7 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
     writer.writeString(obj.fatherPhNo!);
     writer.writeString(obj.email!);
     writer.writeBool(obj.maritalStatus!);
+    writer.writeString(obj.profilePic ?? "");
+    writer.writeInt(obj.uniqueId!);
   }
 }
