@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:temple_app/data/repository/login_repository.dart';
 
 final userDataProvider = StateProvider<Map>((ref) {
@@ -57,6 +56,7 @@ class CustomTextField extends ConsumerStatefulWidget {
 }
 
 class CustomTextFieldState extends ConsumerState<CustomTextField> {
+  bool isDOBpicked = false;
   String pickDateOfBirth = '';
   DateTime? pickedDate;
   late TextEditingController controller;
@@ -64,7 +64,16 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
+    ////////////////Disabled for now////////////////
+    // controller = TextEditingController();
+    ////////////////Disabled for now////////////////
+    // Use the passed controller, or create a new one if it's null
+    controller = widget.controller ?? TextEditingController();
+
+    // If widget.controller was provided, don't overwrite it with a new instance
+    if (widget.controller != null && widget.controller!.text.isNotEmpty) {
+      controller.text = widget.controller!.text;
+    }
   }
 
   @override
@@ -114,6 +123,7 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
                 );
                 if (pickedDate != null) {
                   setState(() {
+                    isDOBpicked = true;
                     controller.text = pickedDate.toString().substring(0, 10);
                     pickDateOfBirth = pickedDate.toString().substring(0, 10);
                   });
@@ -175,10 +185,22 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
                 } else if (widget.label == 'Date of Birth') {
                   final dateFormat = DateFormat('yyyy-MM-dd');
                   final regex = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+                  String? dob;
+                  if (isDOBpicked) {
+                    dob = pickDateOfBirth;
+                  } else {
+                    dob = val;
+                  }
 
-                  String dob = pickDateOfBirth;
+                  //TODO: for edit profile
 
-                  if (regex.hasMatch(dob)) {
+                  //TODO: for edit profile
+
+                  /////////////disabled for now/////////////
+                  // String dob = pickDateOfBirth;
+                  /////////////disabled for now/////////////
+
+                  if (regex.hasMatch(dob!)) {
                     // return null; // Invalid format
                   }
                   try {

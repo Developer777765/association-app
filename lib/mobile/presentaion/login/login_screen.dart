@@ -215,7 +215,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignUp()));
+                                    builder: (context) => SignUp(isItSignUp: true,)));
                           },
                         )
                       ],

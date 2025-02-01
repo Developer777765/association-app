@@ -1,14 +1,20 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temple_app/common_widget/apptheme.dart';
 import 'package:temple_app/data/data_sourse/hive/profile_adapter.dart';
 import 'package:temple_app/data/dtos/get_img_dto.dart';
 import 'package:temple_app/data/dtos/get_img_res_dto.dart';
+import 'package:temple_app/data/dtos/upload_img_req_dto.dart';
 import 'package:temple_app/data/repository/get_register_repository.dart';
 import 'package:temple_app/data/repository/login_repository.dart';
 import 'package:temple_app/mobile/presentaion/login/login_screen.dart';
+import 'package:temple_app/mobile/presentaion/signUpUser/signUpUser.dart';
 import 'package:temple_app/mobile/presentaion/successScreen/state_of_screen.dart';
 
 final imageUrlProvider = StateProvider<String>((ref) {
@@ -122,10 +128,17 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 // color: Colors.white,
                               ),
                               onPressed: () {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text('Under implementation'),
-                                ));
+                                // ScaffoldMessenger.of(context)
+                                //     .showSnackBar(const SnackBar(
+                                //   content: Text('Under implementation'),
+                                // ));
+                                // pickImage();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUp(
+                                              isItSignUp: false,
+                                            )));
                               },
                             )
                           ],
@@ -137,7 +150,8 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                           future: getImageUrl(),
                           builder: (context, snapShot) {
                             if (snapShot.hasError) {
-                              return const Center(child: Icon(Icons.error));
+                              return const CircleAvatar(
+                                  radius: 50, child: Icon(Icons.person_sharp));
                             } else if (snapShot.hasData) {
                               return CircleAvatar(
                                   radius: 50,
@@ -355,12 +369,13 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
     var userProfile = user.getAt(0);
     var req = GetImgReqDto(
             // uniqueId: 'DMS_8dd3b0c1201d41d',
-            uniqueId: userProfile!.profilePic!,
+            uniqueId: userProfile!.profilePic! ?? 'null',
             companyId: 1046,
             category: 'picture',
             keyId: 15)
         .toJson();
     GetImgResDto result = await ref.read(getImageProvider(req).future);
+    // ref.read(imageUrlProvider.notifier).state = result.result.docUrl;
     return result.result.docUrl;
   }
 
@@ -387,6 +402,126 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
       },
     );
   }
+
+  // pickImage() async {
+  //   try {
+  //     PermissionStatus isAllowedToPick;
+  //     if (Platform.isAndroid) {
+  //       int sdkVersion = int.parse(
+  //           (await Process.run('getprop', ['ro.build.version.sdk']))
+  //               .stdout
+  //               .toString()
+  //               .trim());
+  //       if (sdkVersion < 33) {
+  //         PermissionStatus statusOfPermission = await Permission.storage.status;
+  //         if (statusOfPermission.isDenied ||
+  //             statusOfPermission.isPermanentlyDenied) {
+  //           //requesting permission if denied
+  //           statusOfPermission = await Permission.storage.request();
+  //           if (statusOfPermission.isDenied) {
+  //             return;
+  //           }
+  //           if (statusOfPermission.isPermanentlyDenied) {
+  //             openAppSettings();
+  //             return;
+  //           }
+  //         }
+  //         if (statusOfPermission.isGranted) {
+  //           filePicker();
+  //           // final image =
+  //           //     await ImagePicker().pickImage(source: ImageSource.gallery);
+  //           // File file = File(image!.path);
+  //           // if (image == null) return;
+  //           // String fileExtension = image.path.split('.').last.toLowerCase();
+  //           // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
+  //           //     companyId: 1046, //
+  //           //     category: "picture", //
+  //           //     companyName: "Assocy", //
+  //           //     createdBy: "user", //
+  //           //     fileType: fileExtension, //
+  //           //     keyId: 15, //
+  //           //     keyValue: "person picture", //
+  //           //     path: "imagePath", //
+  //           //     unitId: '17', //
+  //           //     fileName: image.name, //
+  //           //     uploadFile: file);
+  //           // ref.read(profilePictureProvider.notifier).state = profilePicture;
+  //           // final imagePath = File(image.path);
+  //           // setState(() {
+  //           //   profilePic = imagePath;
+  //           // });
+  //         }
+  //       } else {
+  //         PermissionStatus statusOfPermission = await Permission.photos.status;
+  //         if (statusOfPermission.isDenied ||
+  //             statusOfPermission.isPermanentlyDenied) {
+  //           //requesting permission if denied
+  //           statusOfPermission = await Permission.photos.request();
+  //           if (statusOfPermission.isDenied) {
+  //             return;
+  //           }
+  //           if (statusOfPermission.isPermanentlyDenied) {
+  //             openAppSettings();
+  //             return;
+  //           }
+  //         }
+  //         if (statusOfPermission.isGranted) {
+  //           filePicker();
+  //           // final image =
+  //           //     await ImagePicker().pickImage(source: ImageSource.gallery);
+  //           // File file = File(image!.path);
+  //           // if (image == null) return;
+  //           // String fileExtension = image.path.split('.').last.toLowerCase();
+  //           // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
+  //           //     companyId: 1046, //
+  //           //     category: "picture", //
+  //           //     companyName: "Assocy", //
+  //           //     createdBy: "user", //
+  //           //     fileType: fileExtension, //
+  //           //     keyId: 15, //
+  //           //     keyValue: "person picture", //
+  //           //     path: "imagePath", //
+  //           //     unitId: '17', //
+  //           //     fileName: image.name, //
+  //           //     uploadFile: file);
+  //           // ref.read(profilePictureProvider.notifier).state = profilePicture;
+  //           // final imagePath = File(image.path);
+  //           // setState(() {
+  //           //   profilePic = imagePath;
+  //           // });
+  //         }
+  //       }
+  //     }
+  //   } catch (ex) {
+  //     debugPrint('exception occured $ex');
+  //   }
+  // }
+
+  // filePicker() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.custom,
+  //     allowedExtensions: ['jpg', 'pdf', 'doc', 'jpeg', 'png', 'gif'],
+  //   );
+  //   File file = File(result!.files.single.path!);
+  //   String fileExtension = file.path.split('.').last.toLowerCase();
+  //   ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
+  //       companyId: 1046, //
+  //       category: "picture", //
+  //       companyName: "Assocy", //
+  //       createdBy: "user", //
+  //       fileType: fileExtension, //
+  //       keyId: 15, //
+  //       keyValue: "person picture", //
+  //       path: "imagePath", //
+  //       unitId: '17', //
+  //       fileName: result.files.single.name, //
+  //       uploadFile: file);
+  //   ref.read(profilePictureProvider.notifier).state = profilePicture;
+  //   // final imagePath = File(file.path);
+  //   // setState(() {
+  //   //   profilePic = imagePath;
+  //   // });
+  // }
 }
 
 //$$$$$$$$$$$$$$$$$$ photo viewer $$$$$$$$$$$$$$$$$$

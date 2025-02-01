@@ -81,7 +81,7 @@ class MyApp extends ConsumerWidget {
       supportedLocales: context.supportedLocales,
       routes: {
         'SignUp': (context) {
-          return SignUp();
+          return SignUp(isItSignUp: true,);
         },
         'HomeScreen': (context) {
           return TabbarWidget();

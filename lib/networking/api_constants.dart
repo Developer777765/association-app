@@ -15,6 +15,7 @@ class ApiConstant {
   static const getAllCompanies = '/api/Registration/GetAllCompanies';
   static const checkNumberAvailability =
       '/api/Registration/MobileNumberUniqueness';
+  static const updateProfile = '/api/Registration/UpdateProfile';
 
   //**************separate api url******************//
   static const getPostalAddress = 'http://www.postalpincode.in/api/pincode/';

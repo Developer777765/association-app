@@ -11,18 +11,19 @@ class UserProfile {
   final int? id;
   final String? profilePic;
   final int? uniqueId;
-  UserProfile(
-      {this.name,
-      this.sex,
-      this.dob,
-      this.address,
-      this.phno,
-      this.spousePhNo,
-      this.fatherPhNo,
-      this.email,
-      this.maritalStatus,
-      this.id,
-      this.profilePic,
-      this.uniqueId
-      });
+
+  UserProfile({
+    this.name,
+    this.sex,
+    this.dob,
+    this.address,
+    this.phno,
+    this.spousePhNo,
+    this.fatherPhNo,
+    this.email,
+    this.maritalStatus,
+    this.id,
+    this.profilePic,
+    this.uniqueId,
+  });
 }

@@ -9,25 +9,45 @@ CheckNumberUniquenessResponse checkNumberUniquenessResponseFromJson(String str) 
 String checkNumberUniquenessResponseToJson(CheckNumberUniquenessResponse data) => json.encode(data.toJson());
 
 class CheckNumberUniquenessResponse {
-    final String? status;
-    final int? statusCode;
-    final bool? isUnique;
+    final String status;
+    final int statusCode;
+    final Result result;
 
     CheckNumberUniquenessResponse({
-        this.status,
-        this.statusCode,
-        this.isUnique,
+        required this.status,
+        required this.statusCode,
+        required this.result,
     });
 
     factory CheckNumberUniquenessResponse.fromJson(Map<String, dynamic> json) => CheckNumberUniquenessResponse(
         status: json["status"],
         statusCode: json["statusCode"],
-        isUnique: json["isUnique"],
+        result: Result.fromJson(json["result"]),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
         "statusCode": statusCode,
-        "isUnique": isUnique,
+        "result": result.toJson(),
+    };
+}
+
+class Result {
+    final bool isNumberUnique;
+    final int userId;
+
+    Result({
+        required this.isNumberUnique,
+        required this.userId,
+    });
+
+    factory Result.fromJson(Map<String, dynamic> json) => Result(
+        isNumberUnique: json["isNumberUnique"],
+        userId: json["userId"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "isNumberUnique": isNumberUnique,
+        "userId": userId,
     };
 }

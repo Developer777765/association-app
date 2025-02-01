@@ -20,17 +20,18 @@ class UserProfileAdapter extends TypeAdapter<UserProfile> {
     final int? uniqueId = reader.readInt();
 
     return UserProfile(
-        name: name,
-        sex: sex,
-        dob: dob,
-        address: address,
-        phno: phno,
-        spousePhNo: spousePhNo,
-        fatherPhNo: fatherPhNo,
-        email: email,
-        maritalStatus: maritalStatus,
-        profilePic: profilePic,
-        uniqueId: uniqueId);
+      name: name,
+      sex: sex,
+      dob: dob,
+      address: address,
+      phno: phno,
+      spousePhNo: spousePhNo,
+      fatherPhNo: fatherPhNo,
+      email: email,
+      maritalStatus: maritalStatus,
+      profilePic: profilePic,
+      uniqueId: uniqueId,
+    );
   }
 
   @override

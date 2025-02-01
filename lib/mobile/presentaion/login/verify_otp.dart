@@ -329,27 +329,27 @@ class _VerifyOTPState extends ConsumerState<VerifyOTP> {
                 Preference.USER_ID, result.verifyOtpResult!.userId.toString());
             final userID = Preference.shared.getString(Preference.USER_ID);
             ref.read(userIdProvider.notifier).update((state) => userID);
-            final userdetails =
-                await GetRegisterRepository().getRegister(userID!, ref.read(companyId));
+            final userdetails = await GetRegisterRepository()
+                .getRegister(userID!, ref.read(companyId));
             //************************ */
             await Preference.shared.setString(
-                Preference.USER_NAME, userdetails.result!.name.toString());
+                Preference.USER_NAME, userdetails.result.name.toString());
             //************************* */
             //trial code for storing data offline/local storage
             var profileBox = Hive.box<UserProfile>('userProfileBox');
             var userProfile = UserProfile(
-              id: userdetails.result!.id,
-                name: userdetails.result!.name,
-                sex: userdetails.result!.sex,
-                address: userdetails.result!.address,
-                dob: userdetails.result!.dob,
-                email: userdetails.result!.email,
-                fatherPhNo: userdetails.result!.fatherPhNo,
-                maritalStatus: userdetails.result!.maritalStatus,
-                phno: userdetails.result!.phno,
-                spousePhNo: userdetails.result!.spousePhNo,
-                profilePic: userdetails.result!.profilePic,
-                uniqueId: userdetails.result!.uniqueId
+                id: userdetails.result.id,
+                name: userdetails.result.name,
+                sex: userdetails.result.sex,
+                address: userdetails.result.address,
+                dob: userdetails.result.dob,
+                email: userdetails.result.email,
+                fatherPhNo: userdetails.result.fatherPhNo,
+                maritalStatus: userdetails.result.maritalStatus,
+                phno: userdetails.result.phno,
+                spousePhNo: userdetails.result.spousePhNo,
+                profilePic: userdetails.result.profilePic,
+                uniqueId: userdetails.result.uniqueId
                 );
             await profileBox.add(userProfile);
             //trial code for storing data offline/local storage

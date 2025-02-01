@@ -41,6 +41,15 @@ final registerUserProvider =
   return result;
 });
 
+final updateUserProfileProvider =
+    FutureProvider.family<UserInfoResultForRegister, Map<String, dynamic>>(
+        (ref, updatedProfile) async {
+  final loginRep = ref.read(loginRepositoryProvider);
+  final UserInfoResultForRegister result =
+      await loginRep.updateProfile(updatedProfile);
+  return result;
+});
+
 final verifyOtpProvider =
     FutureProvider.family<VerifyOtpRes, Map<String, dynamic>>(
         (ref, otpReq) async {
@@ -118,6 +127,24 @@ class LoginRepository {
     }
   }
 
+  Future<UserInfoResultForRegister> updateProfile(
+      Map<String, dynamic> userInfo) async {
+    try {
+      final response =
+          await ApiManager.post(ApiConstant.updateProfile, body: userInfo);
+      final data =
+          UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
+      return data;
+      // if (data.statusCode == '1') {
+      //   return data;
+      // } else {
+      //   return UserInfoResultForRegister(status: 'failed');
+      // }
+    } catch (ex) {
+      rethrow;
+    }
+  }
+
   Future<UserInfoResultForRegister> registerUserMobile(userInfo) async {
     try {
       final response =
@@ -145,11 +172,6 @@ class LoginRepository {
       } else {
         GetOtpRes data = GetOtpRes.fromJson(response);
         return data;
-        // return GetOtpRes(
-        //     status: 'Failed',
-        //     statusCode: '2',
-        //     result:
-        //         'Mobile number is not registered. Please register your account.');
       }
     } catch (ex) {
       rethrow;
@@ -195,7 +217,6 @@ class LoginRepository {
       ProfilePicUploadRes result =
           ProfilePicUploadRes.fromJson(response as Map<String, dynamic>);
       result.result.uniqId;
-      print('data returned from APi is $response');
       if (result.status == 'Success') {
         return result.result.uniqId;
       }
@@ -228,11 +249,7 @@ class LoginRepository {
           CheckNumberUniquenessResponse.fromJson(
               response as Map<String, dynamic>);
       print('data returned from the API $response');
-      if (result.status == 'Success') {
-        return result;
-      } else {
-        return CheckNumberUniquenessResponse(status: 'Failed');
-      }
+      return result;
     } catch (ex) {
       rethrow;
     }

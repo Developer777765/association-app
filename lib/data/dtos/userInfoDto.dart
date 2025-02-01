@@ -155,14 +155,14 @@ class Result {
   final String? email;
   final String? photo;
   final String? uploadLocation;
-  final bool maritalStatus;
+  final bool? maritalStatus;
   final String? createdBy;
   final String? createdDate;
   final dynamic modifiedBy;
   final dynamic modifiedDate;
-  final bool isApproval;
+  final bool? isApproval;
   final String? profilePic;
-  final int uniqueId;
+  final int? uniqueId;
 
   Result({
     required this.id,
