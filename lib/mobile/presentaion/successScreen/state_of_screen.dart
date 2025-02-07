@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 
 class StateOfScreen extends ConsumerStatefulWidget {
-  const StateOfScreen({super.key});
+  bool isItEditProfile = false;
+  StateOfScreen({super.key, required this.isItEditProfile});
 
   @override
   createState() => StateOfScreenState();
@@ -116,10 +117,12 @@ class StateOfScreenState extends ConsumerState<StateOfScreen>
                   const SizedBox(
                     height: 20,
                   ),
-                  const Text(
-                    'Your Profile Has Been Created Successfully!',
+                  Text(
+                    widget.isItEditProfile
+                        ? 'Your Profile Has Been Created Successfully!'
+                        : 'Your Profile Has Been Updated Successfully!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 25,
                     ),

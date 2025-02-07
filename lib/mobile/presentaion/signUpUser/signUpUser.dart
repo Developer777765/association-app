@@ -18,6 +18,7 @@ import 'package:temple_app/data/dtos/upload_img_res_dto.dart';
 import 'package:temple_app/data/repository/get_register_repository.dart';
 import 'package:temple_app/mobile/presentaion/login/login_screen.dart';
 import 'package:temple_app/mobile/presentaion/splash/splash_screen.dart';
+import 'package:temple_app/mobile/presentaion/successScreen/state_of_screen.dart';
 import 'package:temple_app/services/networkStatus.dart';
 import '../../../data/dtos/userInfoReq.dart';
 import '../../../data/repository/login_repository.dart';
@@ -55,7 +56,8 @@ class Profile {
 
 class SignUp extends ConsumerStatefulWidget {
   bool isItSignUp;
-  SignUp({super.key, required this.isItSignUp});
+  String? profilePictureUrl;
+  SignUp({super.key, required this.isItSignUp, this.profilePictureUrl});
   @override
   ConsumerState<SignUp> createState() {
     return SignUpState();
@@ -89,9 +91,11 @@ class SignUpState extends ConsumerState<SignUp> {
     //TODO: for edit profile
     var user;
     var userProfile;
+    var userAddress;
     if (!widget.isItSignUp) {
       user = Hive.box<UserProfile>('UserProfileBox');
       userProfile = user.getAt(0);
+      userAddress = separateAddress(userProfile.address);
     }
     //TODO: for edit profile
     var checkNetworkStatus = ref.watch(networkStatusProvider);
@@ -161,19 +165,34 @@ class SignUpState extends ConsumerState<SignUp> {
                       children: [
                         CircleAvatar(
                           radius: 70,
-                          child: profilePic == null
-                              ? const Icon(
-                                  Icons.person_sharp,
-                                  size: 50,
-                                )
-                              : ClipOval(
+                          child: profilePic !=
+                                  null // Show selected image if available
+                              ? ClipOval(
                                   child: Image.file(
+                                    profilePic!,
                                     width: 140,
                                     height: 140,
-                                    File(profilePic!.path),
                                     fit: BoxFit.cover,
                                   ),
-                                ),
+                                )
+                              : widget
+                                      .isItSignUp // Show default image if signing up
+                                  ? const Icon(
+                                      Icons.person_sharp,
+                                      size: 50,
+                                    )
+                                  : widget.profilePictureUrl !=
+                                          null // Show existing profile picture if editing
+                                      ? ClipOval(
+                                          child: Image.network(
+                                            widget.profilePictureUrl!,
+                                            width: 140,
+                                            height: 140,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
+                                      : const Icon(Icons
+                                          .person_sharp), // Show default if no profile pic
                         ),
                         const Positioned(
                             top: 105,
@@ -375,7 +394,8 @@ class SignUpState extends ConsumerState<SignUp> {
                     //TODO: //testing for edit profile
                     controller: widget.isItSignUp
                         ? null
-                        : TextEditingController(text: '632501'),
+                        : TextEditingController(text: userAddress['Pincode']),
+                    //TODO: //testing for edit profile
                   ),
                   const SizedBox(
                     height: 30,
@@ -383,6 +403,12 @@ class SignUpState extends ConsumerState<SignUp> {
                   CustomTextField(
                     label: 'House no.,Street name,',
                     isFieldNotEditable: false,
+                    //TODO: //testing for edit profile
+                    controller: widget.isItSignUp
+                        ? null
+                        : TextEditingController(
+                            text: userAddress['Street Block']),
+                    //TODO: //testing for edit profile
                   ),
                   const SizedBox(
                     height: 30,
@@ -403,7 +429,9 @@ class SignUpState extends ConsumerState<SignUp> {
                               headerStyle: const TextStyle(
                                 fontWeight: FontWeight.normal,
                               )),
-                          hintText: 'City, Block, District,',
+                          hintText: widget.isItSignUp
+                              ? 'City, Block, District,'
+                              : userAddress['City Block'],
                           items: cities,
                           onChanged: (val) {
                             cityBlockDisitrict = val;
@@ -429,7 +457,9 @@ class SignUpState extends ConsumerState<SignUp> {
                                 border: Border.all(
                                     color:
                                         Theme.of(context).colorScheme.outline)),
-                            child: Text(stateName),
+                            child: Text(widget.isItSignUp
+                                ? stateName
+                                : userAddress['State Block']),
                           )),
                           const SizedBox(
                             width: 7,
@@ -443,7 +473,9 @@ class SignUpState extends ConsumerState<SignUp> {
                                 border: Border.all(
                                     color:
                                         Theme.of(context).colorScheme.outline)),
-                            child: Text(countryName),
+                            child: Text(widget.isItSignUp
+                                ? countryName
+                                : userAddress['Country Block']),
                           )),
                         ],
                       ),
@@ -541,7 +573,6 @@ class SignUpState extends ConsumerState<SignUp> {
                               sex: gender,
                               dob: userInfo['Date of Birth'].toString(),
                               email: userInfo['Email'],
-                              // address: userInfo['Address'],
                               address: completeAddress,
                               phno: '+91${userInfo['Phone No'].toString()}',
                               fatherPhNo:
@@ -620,21 +651,13 @@ class SignUpState extends ConsumerState<SignUp> {
                                     final profileBox =
                                         await Hive.openBox('userIdBox');
                                     await profileBox.put('userId', id);
-                                    //TODO: for edit profile 1
-                                    final addressBloc =
-                                        await Hive.openBox('addressBlock');
-                                    await addressBloc.put(
-                                      'streetBlock',
-                                      userInfo['House no.,Street name,'],
-                                    );
-                                    await addressBloc.put(
-                                      'pincode',userInfo['PinCode']
-                                    );
-                                    //TODO: for edit profile 1
-                                    //****************** */
-
-                                    Navigator.popAndPushNamed(
-                                        context, 'StateOfScreen');
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return StateOfScreen(
+                                          isItEditProfile: false);
+                                    }));
+                                    // Navigator.popAndPushNamed(
+                                    //     context, 'StateOfScreen', arguments: {'isItEditProfile': true});
                                   } else {
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -652,16 +675,64 @@ class SignUpState extends ConsumerState<SignUp> {
                                             'The mobile number is already registered with another profile. Try a new one.')),
                                   );
                                 }
-                              } else {
+                              }
+                              //TODO: this is for edit profile
+                              else {
                                 if (!isMobileNumberUnique &&
                                     existinguserId == userProfile.id) {
                                   val = await ref.read(
                                       updateUserProfileProvider(userReq)
                                           .future);
+                                  if (val.status == '200') {
+                                    int? id = val.result!.id;
+                                    // Navigator.popAndPushNamed(context, 'LogIn');
+                                    //****************** */
+                                    // final profileBox =
+                                    //     await Hive.openBox('userIdBox');
+                                    // await profileBox.put('userId', id);
+                                    var personBox =
+                                        Hive.box<UserProfile>('userProfileBox');
+                                    await personBox.clear();
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return StateOfScreen(
+                                          isItEditProfile: false);
+                                    }));
+                                  } else {
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Registration failed!')),
+                                    );
+                                  }
                                 } else if (isMobileNumberUnique) {
                                   val = await ref.read(
                                       updateUserProfileProvider(userReq)
                                           .future);
+                                  if (val.status == '200') {
+                                    int? id = val.result!.id;
+                                    // Navigator.popAndPushNamed(context, 'LogIn');
+                                    //****************** */
+                                    // final profileBox =
+                                    //     await Hive.openBox('userIdBox');
+                                    // await profileBox.put('userId', id);
+                                    var personBox =
+                                        Hive.box<UserProfile>('userProfileBox');
+                                    await personBox.clear();
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return StateOfScreen(
+                                          isItEditProfile: false);
+                                    }));
+                                  } else {
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Registration failed!')),
+                                    );
+                                  }
                                 } else {
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
@@ -672,6 +743,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                   );
                                 }
                               }
+                              //TODO: this is for edit profile
                             } catch (ex) {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context); // Close loading dialog
@@ -764,28 +836,6 @@ class SignUpState extends ConsumerState<SignUp> {
           }
           if (statusOfPermission.isGranted) {
             filePicker();
-            // final image =
-            //     await ImagePicker().pickImage(source: ImageSource.gallery);
-            // File file = File(image!.path);
-            // if (image == null) return;
-            // String fileExtension = image.path.split('.').last.toLowerCase();
-            // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-            //     companyId: 1046, //
-            //     category: "picture", //
-            //     companyName: "Assocy", //
-            //     createdBy: "user", //
-            //     fileType: fileExtension, //
-            //     keyId: 15, //
-            //     keyValue: "person picture", //
-            //     path: "imagePath", //
-            //     unitId: '17', //
-            //     fileName: image.name, //
-            //     uploadFile: file);
-            // ref.read(profilePictureProvider.notifier).state = profilePicture;
-            // final imagePath = File(image.path);
-            // setState(() {
-            //   profilePic = imagePath;
-            // });
           }
         } else {
           PermissionStatus statusOfPermission = await Permission.photos.status;
@@ -803,28 +853,6 @@ class SignUpState extends ConsumerState<SignUp> {
           }
           if (statusOfPermission.isGranted) {
             filePicker();
-            // final image =
-            //     await ImagePicker().pickImage(source: ImageSource.gallery);
-            // File file = File(image!.path);
-            // if (image == null) return;
-            // String fileExtension = image.path.split('.').last.toLowerCase();
-            // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-            //     companyId: 1046, //
-            //     category: "picture", //
-            //     companyName: "Assocy", //
-            //     createdBy: "user", //
-            //     fileType: fileExtension, //
-            //     keyId: 15, //
-            //     keyValue: "person picture", //
-            //     path: "imagePath", //
-            //     unitId: '17', //
-            //     fileName: image.name, //
-            //     uploadFile: file);
-            // ref.read(profilePictureProvider.notifier).state = profilePicture;
-            // final imagePath = File(image.path);
-            // setState(() {
-            //   profilePic = imagePath;
-            // });
           }
         }
       }
@@ -883,20 +911,41 @@ class SignUpState extends ConsumerState<SignUp> {
     });
   }
 
-  // tempImge() async {
-  //   PermissionStatus status;
-  //   if (Platform.isAndroid) {
-  //     int sdkVersion = int.parse(
-  //         (await Process.run('getprop', ['ro.build.version.sdk']))
-  //             .stdout
-  //             .toString()
-  //             .trim());
-  //     if (sdkVersion < 33) {
-  //       status = await Permission.storage.status;
-  //       if (status.isGranted) {}
-  //     }
-  //   }
-  // }
+  separateAddress(String completeAddress) {
+    String address = completeAddress;
+    // Step 1: Extract the pincode using RegExp
+    RegExp pincodeRegex = RegExp(r'\((\d+)\)');
+    String? pincode =
+        pincodeRegex.firstMatch(address)?.group(1); // Extracts "632501"
+
+    // Step 2: Remove the pincode from the address
+    address = address.replaceAll(RegExp(r'\(\d+\)'), '').trim();
+
+    // Step 3: Split the address by commas
+    List<String> parts = address.split(',');
+
+    // Step 4: Remove empty parts caused by extra commas
+    parts = parts
+        .where((element) => element.trim().isNotEmpty)
+        .map((e) => e.trim())
+        .toList();
+
+    // Step 5: Extract parts
+    String houseStreetBlock = parts.take(2).join(', '); // "8, new street"
+    String cityBlockDistrict = parts
+        .sublist(2, parts.length - 2)
+        .join(', '); // "ammoor, walaja, vellore"
+    String stateBlock = parts[parts.length - 2]; // "tamil nadu"
+    String countryBlock = parts.last; // "india"
+
+    return {
+      "Street Block": houseStreetBlock,
+      "City Block": cityBlockDistrict,
+      "State Block": stateBlock,
+      "Country Block": countryBlock,
+      "Pincode": pincode
+    };
+  }
 }
 
 class CustomClipperTool extends CustomClipper<Path> {

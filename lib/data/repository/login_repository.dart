@@ -9,6 +9,7 @@ import 'package:temple_app/data/dtos/get_img_res_dto.dart';
 import 'package:temple_app/data/dtos/mob_num_uniq_res_dto.dart';
 import 'package:temple_app/data/dtos/postal_code_response_dto.dart';
 import 'package:temple_app/data/dtos/profile_approval_res_dto.dart';
+import 'package:temple_app/data/dtos/update_user_profile_res_dto.dart';
 import 'package:temple_app/data/dtos/upload_img_req_dto.dart';
 import 'package:temple_app/data/dtos/upload_img_res_dto.dart';
 import 'package:temple_app/data/dtos/verify_otp_res.dart';
@@ -42,11 +43,10 @@ final registerUserProvider =
 });
 
 final updateUserProfileProvider =
-    FutureProvider.family<UserInfoResultForRegister, Map<String, dynamic>>(
+    FutureProvider.family<UpdateUserProfileResDto, Map<String, dynamic>>(
         (ref, updatedProfile) async {
   final loginRep = ref.read(loginRepositoryProvider);
-  final UserInfoResultForRegister result =
-      await loginRep.updateProfile(updatedProfile);
+  final UpdateUserProfileResDto result = await loginRep.updateProfile(updatedProfile);
   return result;
 });
 
@@ -111,12 +111,8 @@ class LoginRepository {
   Future<UserInfoResultForRegister> registerUser(
       Map<String, dynamic> userInfo) async {
     try {
-      final response =
-          await ApiManager.post(ApiConstant.register, body: userInfo);
-      print('data returned from APi $response');
-      final data =
-          UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
-
+      final response = await ApiManager.post(ApiConstant.register, body: userInfo);
+      final data = UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
       if (data.statusCode == '1') {
         return data;
       } else {
@@ -127,19 +123,12 @@ class LoginRepository {
     }
   }
 
-  Future<UserInfoResultForRegister> updateProfile(
+  Future<UpdateUserProfileResDto> updateProfile(
       Map<String, dynamic> userInfo) async {
     try {
-      final response =
-          await ApiManager.post(ApiConstant.updateProfile, body: userInfo);
-      final data =
-          UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
+      final response = await ApiManager.post(ApiConstant.updateProfile, body: userInfo);
+      final data = UpdateUserProfileResDto.fromJson(response as Map<String, dynamic>);
       return data;
-      // if (data.statusCode == '1') {
-      //   return data;
-      // } else {
-      //   return UserInfoResultForRegister(status: 'failed');
-      // }
     } catch (ex) {
       rethrow;
     }

@@ -67,7 +67,7 @@ class MyApp extends ConsumerWidget {
       context.setLocale(MyApp._localeMap[next]!);
       _rebuildAllChildren(context);
     });
-      
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
@@ -81,7 +81,9 @@ class MyApp extends ConsumerWidget {
       supportedLocales: context.supportedLocales,
       routes: {
         'SignUp': (context) {
-          return SignUp(isItSignUp: true,);
+          return SignUp(
+            isItSignUp: true,
+          );
         },
         'HomeScreen': (context) {
           return TabbarWidget();
@@ -96,7 +98,9 @@ class MyApp extends ConsumerWidget {
           return MultipleRegisteration();
         },
         'StateOfScreen': (context) {
-          return StateOfScreen();
+          return StateOfScreen(
+            isItEditProfile: true,
+          );
         }
       },
     );

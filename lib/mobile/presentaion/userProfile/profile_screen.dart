@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +46,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
         keyId: 15);
 
     GetImgResDto result = await ref.read(getImageProvider(req.toJson()).future);
-    String imgaeUrl = result.result.docUrl;
+    String imgaeUrl = result.result!.docUrl;
     debugPrint('the picture is $picture');
     ref.read(imageUrlProvider.notifier).state = imgaeUrl;
   }
@@ -127,18 +126,27 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Icons.edit,
                                 // color: Colors.white,
                               ),
-                              onPressed: () {
-                                // ScaffoldMessenger.of(context)
-                                //     .showSnackBar(const SnackBar(
-                                //   content: Text('Under implementation'),
-                                // ));
-                                // pickImage();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SignUp(
-                                              isItSignUp: false,
-                                            )));
+                              onPressed: () async {
+                                try {
+                                  String url = await getImageUrl();
+                                  debugPrint('profile picture url is $url');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignUp(
+                                                isItSignUp: false,
+                                                profilePictureUrl: url,
+                                              )));
+                                } catch (ex) {
+                                  debugPrint('the error for editing is $ex');
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignUp(
+                                                isItSignUp: false,
+                                                // profilePictureUrl: url,
+                                              )));
+                                }
                               },
                             )
                           ],
@@ -158,7 +166,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   child: CircleAvatar(
                                     radius: 50,
                                     backgroundImage:
-                                        NetworkImage(snapShot.data!),
+                                        NetworkImage(snapShot.data ?? ''),
                                   ));
                             } else if (snapShot.connectionState ==
                                 ConnectionState.waiting) {
@@ -170,29 +178,6 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                             }
                           },
                         ),
-                        // CircleAvatar(
-                        //     radius: 50,
-                        //     // backgroundImage: NetworkImage(
-                        //     //   ref.read(imageUrlProvider),
-                        //     // )
-                        //     child: ref.watch(getImageProvider(req)).when(
-                        //         data: (data) {
-                        //       return CircleAvatar(
-                        //         radius: 50,
-                        //         backgroundImage: NetworkImage(
-                        //           data.result.docUrl,
-                        //         ),
-                        //       );
-                        //     }, error: (obj, er) {
-                        //       return Text(
-                        //         userProfile.name!.substring(0, 1),
-                        //         style: const TextStyle(
-                        //             fontWeight: FontWeight.bold, fontSize: 30),
-                        //       );
-                        //     }, loading: () {
-                        //       debugPrint('the image is not determined');
-                        //       return const SizedBox();
-                        //     })),
                         const Spacer(),
                         Text(
                           'Hello, ${userProfile.name}!',
@@ -369,7 +354,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
     var userProfile = user.getAt(0);
     var req = GetImgReqDto(
             // uniqueId: 'DMS_8dd3b0c1201d41d',
-            uniqueId: userProfile!.profilePic! ?? 'null',
+            uniqueId: userProfile?.profilePic ?? 'null',
             companyId: 1046,
             category: 'picture',
             keyId: 15)
@@ -402,126 +387,6 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
       },
     );
   }
-
-  // pickImage() async {
-  //   try {
-  //     PermissionStatus isAllowedToPick;
-  //     if (Platform.isAndroid) {
-  //       int sdkVersion = int.parse(
-  //           (await Process.run('getprop', ['ro.build.version.sdk']))
-  //               .stdout
-  //               .toString()
-  //               .trim());
-  //       if (sdkVersion < 33) {
-  //         PermissionStatus statusOfPermission = await Permission.storage.status;
-  //         if (statusOfPermission.isDenied ||
-  //             statusOfPermission.isPermanentlyDenied) {
-  //           //requesting permission if denied
-  //           statusOfPermission = await Permission.storage.request();
-  //           if (statusOfPermission.isDenied) {
-  //             return;
-  //           }
-  //           if (statusOfPermission.isPermanentlyDenied) {
-  //             openAppSettings();
-  //             return;
-  //           }
-  //         }
-  //         if (statusOfPermission.isGranted) {
-  //           filePicker();
-  //           // final image =
-  //           //     await ImagePicker().pickImage(source: ImageSource.gallery);
-  //           // File file = File(image!.path);
-  //           // if (image == null) return;
-  //           // String fileExtension = image.path.split('.').last.toLowerCase();
-  //           // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-  //           //     companyId: 1046, //
-  //           //     category: "picture", //
-  //           //     companyName: "Assocy", //
-  //           //     createdBy: "user", //
-  //           //     fileType: fileExtension, //
-  //           //     keyId: 15, //
-  //           //     keyValue: "person picture", //
-  //           //     path: "imagePath", //
-  //           //     unitId: '17', //
-  //           //     fileName: image.name, //
-  //           //     uploadFile: file);
-  //           // ref.read(profilePictureProvider.notifier).state = profilePicture;
-  //           // final imagePath = File(image.path);
-  //           // setState(() {
-  //           //   profilePic = imagePath;
-  //           // });
-  //         }
-  //       } else {
-  //         PermissionStatus statusOfPermission = await Permission.photos.status;
-  //         if (statusOfPermission.isDenied ||
-  //             statusOfPermission.isPermanentlyDenied) {
-  //           //requesting permission if denied
-  //           statusOfPermission = await Permission.photos.request();
-  //           if (statusOfPermission.isDenied) {
-  //             return;
-  //           }
-  //           if (statusOfPermission.isPermanentlyDenied) {
-  //             openAppSettings();
-  //             return;
-  //           }
-  //         }
-  //         if (statusOfPermission.isGranted) {
-  //           filePicker();
-  //           // final image =
-  //           //     await ImagePicker().pickImage(source: ImageSource.gallery);
-  //           // File file = File(image!.path);
-  //           // if (image == null) return;
-  //           // String fileExtension = image.path.split('.').last.toLowerCase();
-  //           // ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-  //           //     companyId: 1046, //
-  //           //     category: "picture", //
-  //           //     companyName: "Assocy", //
-  //           //     createdBy: "user", //
-  //           //     fileType: fileExtension, //
-  //           //     keyId: 15, //
-  //           //     keyValue: "person picture", //
-  //           //     path: "imagePath", //
-  //           //     unitId: '17', //
-  //           //     fileName: image.name, //
-  //           //     uploadFile: file);
-  //           // ref.read(profilePictureProvider.notifier).state = profilePicture;
-  //           // final imagePath = File(image.path);
-  //           // setState(() {
-  //           //   profilePic = imagePath;
-  //           // });
-  //         }
-  //       }
-  //     }
-  //   } catch (ex) {
-  //     debugPrint('exception occured $ex');
-  //   }
-  // }
-
-  // filePicker() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.custom,
-  //     allowedExtensions: ['jpg', 'pdf', 'doc', 'jpeg', 'png', 'gif'],
-  //   );
-  //   File file = File(result!.files.single.path!);
-  //   String fileExtension = file.path.split('.').last.toLowerCase();
-  //   ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-  //       companyId: 1046, //
-  //       category: "picture", //
-  //       companyName: "Assocy", //
-  //       createdBy: "user", //
-  //       fileType: fileExtension, //
-  //       keyId: 15, //
-  //       keyValue: "person picture", //
-  //       path: "imagePath", //
-  //       unitId: '17', //
-  //       fileName: result.files.single.name, //
-  //       uploadFile: file);
-  //   ref.read(profilePictureProvider.notifier).state = profilePicture;
-  //   // final imagePath = File(file.path);
-  //   // setState(() {
-  //   //   profilePic = imagePath;
-  //   // });
-  // }
 }
 
 //$$$$$$$$$$$$$$$$$$ photo viewer $$$$$$$$$$$$$$$$$$
@@ -550,3 +415,4 @@ class DetailScreen extends StatelessWidget {
 }
 
 //$$$$$$$$$$$$$$$$$$ photo viewer $$$$$$$$$$$$$$$$$$
+
