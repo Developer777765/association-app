@@ -146,15 +146,17 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                            // color: const Color(0xFFF88906),
                             color:
                                 Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(25)),
                         height: 80,
-                        child: const Center(
+                        child: Center(
                             child: ListTile(
                                 leading: Icon(Icons.flag),
-                                title: Text('Upcoming Events'))),
+                                iconColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                                title: const Text('Upcoming Events'))),
                       ),
                     ),
                   ),
@@ -162,29 +164,31 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                     width: 10,
                   ),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                          // color: const Color(
-                          //   0xFFDD2219,
-                          // ),
-                          borderRadius: BorderRadius.circular(25)),
-                      height: 80,
-                      child: Center(
-                          child:
-                              // Text('Participate in Events')
-                              IconButton(
-                        icon: const Icon(
-                          Icons.event_note,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          navigateTo('Rent Out or Book');
-                        },
-                      )
-                          //  Text('Event')
+                    flex: 2,
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateTo('Rent Out or Book');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(25)),
+                        height: 80,
+                        child: Center(
+                            child: ListTile(
+                          leading: Icon(
+                            Icons.event_note,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                            size: 30,
                           ),
+                          title: const Text('Rent Out or Book'),
+                        )
+                            //  Text('Event')
+                            ),
+                      ),
                     ),
                   )
                 ],
@@ -195,22 +199,30 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(25)),
-                      height: 80,
-                      child: Center(
-                          child: IconButton(
-                        icon: const Icon(
-                          Icons.volunteer_activism,
-                          size: 30,
+                    flex: 2,
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateTo('Donations you made');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(25)),
+                        height: 80,
+                        child: Center(
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.volunteer_activism,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              size: 30,
+                            ),
+                            title: const Text('Donations you made'),
+                          ),
                         ),
-                        onPressed: () {
-                          navigateTo('Donations you made');
-                        },
-                      )),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -228,10 +240,15 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                                 Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(25)),
                         height: 80,
-                        child: const Center(
+                        child: Center(
                             child: ListTile(
-                                leading: Icon(Icons.money),
-                                title: Text('Pending Payment'))),
+                                leading: Icon(
+                                  Icons.money,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                ),
+                                title: const Text('Pending Payment'))),
                       ),
                     ),
                   )
@@ -254,10 +271,15 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                                 Theme.of(context).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(25)),
                         height: 80,
-                        child: const Center(
+                        child: Center(
                             child: ListTile(
-                                leading: Icon(Icons.account_tree),
-                                title: Text('My Family Tree'))),
+                                leading: Icon(
+                                  Icons.account_tree,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryContainer,
+                                ),
+                                title: const Text('My Family Tree'))),
                       ),
                     ),
                   ),
@@ -265,24 +287,32 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                     width: 10,
                   ),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(25)),
-                      height: 80,
-                      child: Center(
-                          child: IconButton(
-                        icon: const Icon(
-                          Icons.message,
-                          size: 30,
+                    flex: 2,
+                    child: GestureDetector(
+                      onTap: () {
+                        navigateTo('Feedback');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(25)),
+                        height: 80,
+                        child: Center(
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.message,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              size: 30,
+                            ),
+                            title: const Text('Feedback'),
+                          ),
                         ),
-                        onPressed: () {
-                          navigateTo('Feedback');
-                        },
-                      )),
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 25),
@@ -304,8 +334,6 @@ class HomeScreenVersion2State extends ConsumerState<HomeScreenVersion2> {
                           navigateTo('Event ${index + 1}');
                         },
                         child: SizedBox(
-                          // height: 400,
-                          // width: 200,
                           height: MediaQuery.of(context).size.height * 0.35,
                           width: MediaQuery.of(context).size.width * 0.4,
                           child: Column(

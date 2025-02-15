@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,9 +11,7 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:temple_app/data/data_sourse/hive/profile_adapter.dart';
 import 'package:temple_app/data/dtos/mob_num_uni_req_dto.dart';
 import 'package:temple_app/data/dtos/upload_img_req_dto.dart';
-import 'package:temple_app/data/dtos/upload_img_res_dto.dart';
-import 'package:temple_app/data/repository/get_register_repository.dart';
-import 'package:temple_app/mobile/presentaion/login/login_screen.dart';
+import 'package:temple_app/mobile/presentaion/captureImage/camera_capture.dart';
 import 'package:temple_app/mobile/presentaion/splash/splash_screen.dart';
 import 'package:temple_app/mobile/presentaion/successScreen/state_of_screen.dart';
 import 'package:temple_app/services/networkStatus.dart';
@@ -34,6 +29,10 @@ final profilePictureProvider = StateProvider<ProfilePicUploadReq>((ref) {
 
 final uniquImgId = StateProvider<String>((ref) {
   return '';
+});
+
+final changeCityBlock = StateProvider<bool>((ref) {
+  return false;
 });
 
 class Profile {
@@ -54,6 +53,7 @@ class Profile {
       this.address});
 }
 
+// ignore: must_be_immutable
 class SignUp extends ConsumerStatefulWidget {
   bool isItSignUp;
   String? profilePictureUrl;
@@ -80,24 +80,22 @@ class SignUpState extends ConsumerState<SignUp> {
   File? profilePic;
   bool hasNetworkChanged = true;
   String cityBlockDisitrict = '';
+  List<dynamic>? postOfficesOfEditProfile;
+  var userEditAddress;
+  var userEdit;
+  var userEditProfile;
 
   @override
   void initState() {
     super.initState();
+    if (!widget.isItSignUp) {
+      loadPostalCodeDetails();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //TODO: for edit profile
-    var user;
-    var userProfile;
-    var userAddress;
-    if (!widget.isItSignUp) {
-      user = Hive.box<UserProfile>('UserProfileBox');
-      userProfile = user.getAt(0);
-      userAddress = separateAddress(userProfile.address);
-    }
-    //TODO: for edit profile
+    bool hasCityBlockChanged = ref.watch(changeCityBlock);
     var checkNetworkStatus = ref.watch(networkStatusProvider);
     bool isUserMarried = ref.watch(maritalStatusProvider);
     List cities = ref.watch(citiesProvider);
@@ -139,7 +137,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     height: 70,
                   ),
                   Text(
-                    widget.isItSignUp!
+                    widget.isItSignUp
                         ? 'Let\'s register your profile!'
                         : 'Edit Profile',
                     style: const TextStyle(
@@ -148,7 +146,7 @@ class SignUpState extends ConsumerState<SignUp> {
                         color: Colors.black),
                   ),
                   Text(
-                    widget.isItSignUp!
+                    widget.isItSignUp
                         ? 'Enter Your Personal Data to Create One'
                         : '',
                     style: const TextStyle(
@@ -159,7 +157,8 @@ class SignUpState extends ConsumerState<SignUp> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      await pickImage();
+                      // await pickImage();
+                      bringForwardModalBottomSheet(context);
                     },
                     child: Stack(
                       children: [
@@ -213,7 +212,8 @@ class SignUpState extends ConsumerState<SignUp> {
                     //TODO: testing for edit profile
                     controller: widget.isItSignUp
                         ? null
-                        : TextEditingController(text: userProfile.name ?? ''),
+                        : TextEditingController(
+                            text: userEditProfile.name ?? ''),
                   ),
                   const SizedBox(
                     height: 30,
@@ -281,7 +281,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     controller: widget.isItSignUp
                         ? null
                         : TextEditingController(
-                            text: userProfile.phno.substring(3, 13) ?? ''),
+                            text: userEditProfile.phno.substring(3, 13) ?? ''),
                   ),
                   const SizedBox(
                     height: 30,
@@ -295,10 +295,10 @@ class SignUpState extends ConsumerState<SignUp> {
                     controller: widget.isItSignUp
                         ? null
                         : TextEditingController(
-                            text: userProfile.fatherPhNo == 'null' ||
-                                    userProfile.fatherPhNo == null
+                            text: userEditProfile.fatherPhNo == 'null' ||
+                                    userEditProfile.fatherPhNo == null
                                 ? ''
-                                : userProfile.fatherPhNo),
+                                : userEditProfile.fatherPhNo),
                   ),
                   const SizedBox(height: 30),
                   isUserMarried
@@ -311,7 +311,7 @@ class SignUpState extends ConsumerState<SignUp> {
                           controller: widget.isItSignUp
                               ? null
                               : TextEditingController(
-                                  text: userProfile.spousePhNo ?? ''),
+                                  text: userEditProfile.spousePhNo ?? ''),
                         )
                       : const SizedBox(height: 0),
                   SizedBox(
@@ -321,15 +321,12 @@ class SignUpState extends ConsumerState<SignUp> {
                     label: 'Date of Birth',
                     hint: 'DD-MM-YYYY',
                     isFieldNotEditable: true,
-                    /////////disabled for now////////////
-                    // controller: TextEditingController(),
-                    /////////disabled for now////////////
                     initialText: 'DD-MM-YYYY',
                     //TODO: //testing for edit profile
                     controller: widget.isItSignUp
                         ? null
                         : TextEditingController(
-                            text: userProfile.dob.substring(0, 10)),
+                            text: userEditProfile.dob.substring(0, 10)),
                   ),
                   const SizedBox(
                     height: 30,
@@ -378,7 +375,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     //TODO: //testing for edit profile
                     controller: widget.isItSignUp
                         ? null
-                        : TextEditingController(text: userProfile.email),
+                        : TextEditingController(text: userEditProfile.email),
                   ),
                   const SizedBox(
                     height: 30,
@@ -388,13 +385,11 @@ class SignUpState extends ConsumerState<SignUp> {
                     label: 'PinCode',
                     isFieldNotEditable: false,
                     keyBoardType: TextInputType.phone,
-                    /////////disabled for now////////////
-                    // controller: TextEditingController(),
-                    /////////disabled for now////////////
                     //TODO: //testing for edit profile
                     controller: widget.isItSignUp
                         ? null
-                        : TextEditingController(text: userAddress['Pincode']),
+                        : TextEditingController(
+                            text: userEditAddress['Pincode']),
                     //TODO: //testing for edit profile
                   ),
                   const SizedBox(
@@ -407,7 +402,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     controller: widget.isItSignUp
                         ? null
                         : TextEditingController(
-                            text: userAddress['Street Block']),
+                            text: userEditAddress['Street Block']),
                     //TODO: //testing for edit profile
                   ),
                   const SizedBox(
@@ -431,10 +426,14 @@ class SignUpState extends ConsumerState<SignUp> {
                               )),
                           hintText: widget.isItSignUp
                               ? 'City, Block, District,'
-                              : userAddress['City Block'],
-                          items: cities,
+                              : userEditAddress['City Block'],
+                          items: hasCityBlockChanged
+                              ? cities
+                              : postOfficesOfEditProfile,
                           onChanged: (val) {
+                            hasCityBlockChanged = true;
                             cityBlockDisitrict = val;
+                            ref.read(changeCityBlock.notifier).state = true;
                           }),
                     ),
                   ),
@@ -459,7 +458,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                         Theme.of(context).colorScheme.outline)),
                             child: Text(widget.isItSignUp
                                 ? stateName
-                                : userAddress['State Block']),
+                                : userEditAddress['State Block']),
                           )),
                           const SizedBox(
                             width: 7,
@@ -475,7 +474,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                         Theme.of(context).colorScheme.outline)),
                             child: Text(widget.isItSignUp
                                 ? countryName
-                                : userAddress['Country Block']),
+                                : userEditAddress['Country Block']),
                           )),
                         ],
                       ),
@@ -513,8 +512,6 @@ class SignUpState extends ConsumerState<SignUp> {
                           uniqueIdOfPic = await ref
                               .read(loginRepositoryProvider)
                               .uploadProfilePicture(form);
-                          debugPrint(
-                              'the unique id of image is $uniqueIdOfPic');
                           //TODO: disabled for now(photo upload)
                           //###################disabled for now######################
                         } else {
@@ -564,14 +561,16 @@ class SignUpState extends ConsumerState<SignUp> {
                           if (userInfo['PinCode'] != null &&
                               userInfo['House no.,Street name,'] != null) {
                             completeAddress =
-                                '${userInfo['House no.,Street name,']}, $cityBlockDisitrict (${userInfo['PinCode']}), $stateName, $countryName';
+                                '${userInfo['House no.,Street name,']}, ${hasCityBlockChanged ? cityBlockDisitrict : userEditAddress['City Block']} (${userInfo['PinCode']}), $stateName, $countryName';
                           }
                           //*************address validation************ */
                           UserInfoReq user = UserInfoReq(
-                              id: userProfile?.id ?? 0,
+                              id: userEditProfile?.id ?? 0,
                               name: userInfo['Name'],
                               sex: gender,
-                              dob: userInfo['Date of Birth'].toString(),
+                              dob: userInfo['Date of Birth']
+                                  .toString()
+                                  .substring(0, 10),
                               email: userInfo['Email'],
                               address: completeAddress,
                               phno: '+91${userInfo['Phone No'].toString()}',
@@ -629,18 +628,11 @@ class SignUpState extends ConsumerState<SignUp> {
                               bool isMobileNumberUnique =
                                   numberChecker.result.isNumberUnique;
                               int existinguserId = numberChecker.result.userId;
-                              ///////////disbled for now////////////
-                              // if (isMobileNumberUnique) {
-                              // final val = await ref
-                              //       .read(registerUserProvider(userReq).future);
-                              ///////////disbled for now////////////
-                              //TODO: for edit profile
                               var val;
                               if (widget.isItSignUp) {
                                 if (isMobileNumberUnique) {
                                   val = await ref.read(
                                       registerUserProvider(userReq).future);
-                                  //TODO: for edit profile
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
 
@@ -656,8 +648,6 @@ class SignUpState extends ConsumerState<SignUp> {
                                       return StateOfScreen(
                                           isItEditProfile: false);
                                     }));
-                                    // Navigator.popAndPushNamed(
-                                    //     context, 'StateOfScreen', arguments: {'isItEditProfile': true});
                                   } else {
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -679,17 +669,13 @@ class SignUpState extends ConsumerState<SignUp> {
                               //TODO: this is for edit profile
                               else {
                                 if (!isMobileNumberUnique &&
-                                    existinguserId == userProfile.id) {
+                                    existinguserId == userEditProfile.id) {
                                   val = await ref.read(
                                       updateUserProfileProvider(userReq)
                                           .future);
                                   if (val.status == '200') {
-                                    int? id = val.result!.id;
-                                    // Navigator.popAndPushNamed(context, 'LogIn');
-                                    //****************** */
-                                    // final profileBox =
-                                    //     await Hive.openBox('userIdBox');
-                                    // await profileBox.put('userId', id);
+                                    ref.read(changeCityBlock.notifier).state =
+                                        false;
                                     var personBox =
                                         Hive.box<UserProfile>('userProfileBox');
                                     await personBox.clear();
@@ -711,12 +697,8 @@ class SignUpState extends ConsumerState<SignUp> {
                                       updateUserProfileProvider(userReq)
                                           .future);
                                   if (val.status == '200') {
-                                    int? id = val.result!.id;
-                                    // Navigator.popAndPushNamed(context, 'LogIn');
-                                    //****************** */
-                                    // final profileBox =
-                                    //     await Hive.openBox('userIdBox');
-                                    // await profileBox.put('userId', id);
+                                    ref.read(changeCityBlock.notifier).state =
+                                        false;
                                     var personBox =
                                         Hive.box<UserProfile>('userProfileBox');
                                     await personBox.clear();
@@ -786,7 +768,6 @@ class SignUpState extends ConsumerState<SignUp> {
                               child: Text(
                                 'Login',
                                 style: TextStyle(
-                                    // color: Color(0xFF0D256E),
                                     color: Theme.of(context)
                                         .colorScheme
                                         .primaryContainer,
@@ -913,30 +894,18 @@ class SignUpState extends ConsumerState<SignUp> {
 
   separateAddress(String completeAddress) {
     String address = completeAddress;
-    // Step 1: Extract the pincode using RegExp
     RegExp pincodeRegex = RegExp(r'\((\d+)\)');
-    String? pincode =
-        pincodeRegex.firstMatch(address)?.group(1); // Extracts "632501"
-
-    // Step 2: Remove the pincode from the address
+    String? pincode = pincodeRegex.firstMatch(address)?.group(1);
     address = address.replaceAll(RegExp(r'\(\d+\)'), '').trim();
-
-    // Step 3: Split the address by commas
     List<String> parts = address.split(',');
-
-    // Step 4: Remove empty parts caused by extra commas
     parts = parts
         .where((element) => element.trim().isNotEmpty)
         .map((e) => e.trim())
         .toList();
-
-    // Step 5: Extract parts
-    String houseStreetBlock = parts.take(2).join(', '); // "8, new street"
-    String cityBlockDistrict = parts
-        .sublist(2, parts.length - 2)
-        .join(', '); // "ammoor, walaja, vellore"
-    String stateBlock = parts[parts.length - 2]; // "tamil nadu"
-    String countryBlock = parts.last; // "india"
+    String houseStreetBlock = parts.take(2).join(', ');
+    String cityBlockDistrict = parts.sublist(2, parts.length - 2).join(', ');
+    String stateBlock = parts[parts.length - 2];
+    String countryBlock = parts.last;
 
     return {
       "Street Block": houseStreetBlock,
@@ -945,6 +914,114 @@ class SignUpState extends ConsumerState<SignUp> {
       "Country Block": countryBlock,
       "Pincode": pincode
     };
+  }
+
+  void loadPostalCodeDetails() async {
+    userEdit = Hive.box<UserProfile>('UserProfileBox');
+    userEditProfile = userEdit.getAt(0);
+    userEditAddress = separateAddress(userEditProfile!.address!);
+
+    var result = await ref
+        .read(loginRepositoryProvider)
+        .getPostalCodeDetails(userEditAddress['Pincode']);
+
+    List postOffices = result['PostOffice'];
+    setState(() {
+      postOfficesOfEditProfile = List.generate(postOffices.length, (index) {
+        return '${postOffices[index]['Name']}, ${postOffices[index]['Taluk']}, ${postOffices[index]['District']}';
+      }, growable: true);
+    });
+  }
+
+  void bringForwardModalBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+          height: MediaQuery.of(context).size.height * 0.3,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(height: 20),
+              const Text(
+                'Select profile picture',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CameraCapture()));
+                      },
+                      child: const SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.camera,
+                              size: 30,
+                            ),
+                            Text('Camera')
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () async {
+                        await pickImage();
+                      },
+                      child: const SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image,
+                              size: 30,
+                            ),
+                            Text('Gallery')
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {},
+                      child: const SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.person,
+                              size: 30,
+                            ),
+                            Text('Avatar')
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 

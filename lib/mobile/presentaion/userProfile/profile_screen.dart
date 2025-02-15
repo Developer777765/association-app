@@ -237,7 +237,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
                           title: Text(
-                            userProfile.fatherPhNo! == 'strng' ||
+                            userProfile.fatherPhNo! == 'null' ||
                                     userProfile.fatherPhNo == null
                                 ? 'Parent\'s No (not provided)'
                                 : '${userProfile.fatherPhNo} (Parent\'s)',
@@ -253,7 +253,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
                           title: Text(
-                            userProfile.spousePhNo!.isEmpty ||
+                            userProfile.spousePhNo! == 'null' ||
                                     userProfile.spousePhNo == null
                                 ? 'Wife\'s No (not provided)'
                                 : '${userProfile.spousePhNo} (Wife\'s)',

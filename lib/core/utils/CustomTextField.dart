@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:temple_app/data/repository/login_repository.dart';
+import 'package:temple_app/mobile/presentaion/signUpUser/signUpUser.dart';
 
 final userDataProvider = StateProvider<Map>((ref) {
   return {};
@@ -110,6 +111,7 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
                   var country = result['PostOffice'][0]['Country'];
                   ref.read(nameOfStateProvider.notifier).state = state;
                   ref.read(countryProvider.notifier).state = country;
+                  ref.read(changeCityBlock.notifier).state = true;
                 }
               }
             },

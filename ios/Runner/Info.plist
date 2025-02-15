@@ -6,6 +6,10 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Temple App</string>
+	<key>NSCameraUsageDescription</key>
+    <string>We need access to your camera for capturing photos.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to your microphone for recording videos.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

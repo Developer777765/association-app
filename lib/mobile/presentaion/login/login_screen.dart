@@ -1,20 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:temple_app/common_widget/apptheme.dart';
 import 'package:temple_app/data/dtos/profile_approval_req_dto.dart';
-import 'package:temple_app/mobile/presentaion/home_redefined/testScreen.dart';
 import 'package:temple_app/services/customPainter.dart';
-
-import 'package:temple_app/src/core/assets/assets.gen.dart';
-import '../../../common_widget/button.dart';
 import '../../../data/dtos/get_otp_req_dto.dart';
-
 import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../data/repository/login_repository.dart';
-import '../../../utils/size_utils.dart';
 import '../signUpUser/signUpUser.dart';
 
 final mobileNumberProvider = StateProvider<String>((ref) {
@@ -40,8 +31,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Preference.shared.setString(Preference.USER_ID, (null).toString());
   }
 
+  @override
   Widget build(BuildContext context) {
-    double sizeWidth = TSizeUtils.wPercent(100, context: context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -50,255 +41,216 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // decoration: BoxDecoration(
           //     // color: Theme.of(context).colorScheme.onSecondaryContainer
           //     // color: Theme.of(context).colorScheme.primaryContainer
-
           //     gradient: LinearGradient(colors: [
           //   // Theme.of(context).colorScheme.primaryContainer,
           //   Theme.of(context).colorScheme.primaryFixedDim,
           //   Theme.of(context).colorScheme.primaryContainer,
           //   // Theme.of(context).colorScheme.secondaryContainer,
           // ], begin: Alignment.topRight, end: Alignment.bottomLeft)),
-          //////###############///////////////////
-          ///
-
+          //TODO: change the splash screen UI
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                CustomPaint(
+          child: Stack(
+            children: [
+              CustomPaint(
+                size: MediaQuery.of(context).size,
+                painter: CustomPainterOf(),
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width / 5,
+                top: MediaQuery.of(context).size.height / 5,
+                child: CustomPaint(
                   size: MediaQuery.of(context).size,
                   painter: CustomPainterOf(),
                 ),
-                Positioned(
-                  left: MediaQuery.of(context).size.width / 5,
-                  top: MediaQuery.of(context).size.height / 5,
-                  child: CustomPaint(
-                    size: MediaQuery.of(context).size,
-                    painter: CustomPainterOf(),
+              ),
+              Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Tamil/English',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      )
+                    ],
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 50),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Welcome Back! ',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            // color: AppTheme.primayColor,
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Login and Start your amazing journey',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            // color: AppTheme.blackColor,
+                            color: Colors.grey,
+                          )),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.21,
+                    width: MediaQuery.of(context).size.height * 0.21,
+                    child: Stack(
                       children: [
-                        Text('Welcome Back! ',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              // color: AppTheme.primayColor,
-                            )),
-                      ],
-                    ),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Login and Start your amazing journey',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              // color: AppTheme.blackColor,
-                              color: Colors.grey,
-                            )),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.21,
-                      width: MediaQuery.of(context).size.height * 0.21,
-                      child: Stack(
-                        children: [
-                          Container(
+                        Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryFixedDim),
+                          height: double.infinity,
+                          width: double.infinity,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .primaryFixedDim),
-                            height: double.infinity,
-                            width: double.infinity,
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer),
-                              height: MediaQuery.of(context).size.height * 0.14,
-                              width: MediaQuery.of(context).size.height * 0.14,
-                              child: Center(
-                                child: Icon(
-                                  Icons.mobile_screen_share,
-                                  size: 40,
-                                ),
+                                    .primaryContainer),
+                            height: MediaQuery.of(context).size.height * 0.14,
+                            width: MediaQuery.of(context).size.height * 0.14,
+                            child: Center(
+                              child: Icon(
+                                Icons.mobile_screen_share,
+                                size: 40,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    // Image.asset(
-                    //   Assets.images.login.path,
-                    //   height: sizeHeight * 0.2,
-                    //   width: sizeWidth,
-                    // ),
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10)),
-                        height: 70,
-                        child: IntlPhoneField(
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 14),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 20),
-                            labelText: 'Mobile',
-                            hintText: 'Mobile',
-                            hintStyle: TextStyle(),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // borderSide: BorderSide(color: Colors.grey),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // borderSide: BorderSide(color: Colors.grey)
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              // borderSide: BorderSide(color: Colors.grey),
-                            ),
-                          ),
-                          initialCountryCode: 'IN',
-                          onChanged: (phone) {
-                            mobileNo = phone.completeNumber;
-                          },
-                          onSubmitted: (phone) {
-                            mobileNo = '+91$phone';
-                          },
                         ),
-                      ),
+                      ],
                     ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                        onPressed: () {
-                          // approveRegisteredProfile(65);
-                          getLoginOtp();
-                          // Navigator.push(context,
-                          //     MaterialPageRoute(builder: (context) {
-                          //   return TestScreen(nameOfScreen: 'nameOfScreen');
-                          // }));
+                  ),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)),
+                      height: 70,
+                      child: IntlPhoneField(
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w400, fontSize: 14),
+                        decoration: InputDecoration(
+                          filled: true, // Enables background color
+                          fillColor: Colors.grey[300],
+                          contentPadding: EdgeInsets.only(top: 20),
+                          labelText: 'Mobile',
+                          hintText: 'Mobile',
+                          hintStyle: TextStyle(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            // borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            // borderSide: BorderSide(color: Colors.grey)
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            // borderSide: BorderSide(color: Colors.grey)
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            // borderSide: BorderSide(color: Colors.grey),
+                          ),
+                        ),
+                        initialCountryCode: 'IN',
+                        onChanged: (phone) {
+                          mobileNo = phone.completeNumber;
                         },
-                        child: SizedBox(
-                            width: MediaQuery.of(context).size.width - 120,
-                            height: 40,
-                            child: Center(child: Text('Get OTP')))),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                          child: Text(
-                            'Register',
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignUp(isItSignUp: true,)));
-                          },
-                        )
-                      ],
+                        onSubmitted: (phone) {
+                          mobileNo = '+91$phone';
+                        },
+                      ),
                     ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: sizeWidth * 0.25,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              // color: controller.tamilOnclick.value
-                              //     ? AppTheme.primaryColor
-                              //     : Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Tamil",
-                                style: TextStyle(
-                                  // color: controller.tamilOnclick.value
-                                  //     ? Colors.black
-                                  //     : Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
+                  ),
+                  SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      getLoginOtp();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryFixed),
+                      width: MediaQuery.of(context).size.width - 35,
+                      height: 40,
+                      child: Center(
+                        child: Text('Get OTP'),
+                      ),
+                    ),
+                  ),
+                  // SizedBox(height: 10),
+                  const Text('(Or)'),
+                  // SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUp(
+                                        isItSignUp: true,
+                                      )));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(border: Border.all()),
+                          width: MediaQuery.of(context).size.width - 35,
+                          height: 40,
+                          child: Center(
+                            child: Text('Register'),
                           ),
                         ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: sizeWidth * 0.25,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              // color: controller.tamilOnclick.value
-                              //     ? AppTheme.primaryColor
-                              //     : Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "English",
-                                style: TextStyle(
-                                  // color: controller.tamilOnclick.value
-                                  //     ? Colors.black
-                                  //     : Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Version:0.01',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                            )),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      Text('Version:0.01',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -310,10 +262,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       showCustomDialog();
       final result = await ref.read(profileApprovalProvider(num).future);
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
       if (result.status == 'Success') {
         getLoginOtp();
       } else {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Your profile isn\'t approved yet')));
       }
@@ -353,6 +307,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       try {
         final otpResult = await ref.read(loginUserProvider(otp).future);
 
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
 
         if (otpResult.status == 'Success') {
@@ -361,6 +316,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           // ignore: use_build_context_synchronously
           Navigator.popAndPushNamed(context, 'VerifyOtp');
         } else if (otpResult.status == 'Failed') {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
                 content: Text(
@@ -368,14 +324,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
         }
       } catch (ex) {
-        Navigator.pop(context); // Close loading dialog
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   // SnackBar(content: Text('Error: $ex')),
-        //   SnackBar(content: Text('Try again')),
-        //   // SnackBar(
-        //   //     content: Text(
-        //   //         'Your mobile number doesn\'t exist. Please register your profile')),
-        // );
+        // ignore: use_build_context_synchronously
+        Navigator.pop(context);
         debugPrint('Error: $ex');
       }
     } else if (mobileNo.isEmpty) {
