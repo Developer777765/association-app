@@ -24,7 +24,7 @@ class _TransactionsState extends State<Transactions> {
             Center(
                 child: Image.asset(
               'assets/images/empty.png',
-              height: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.1,
             )),
             const Center(
               child: Padding(
@@ -41,7 +41,7 @@ class _TransactionsState extends State<Transactions> {
             const Center(
               child: Text(
                 '      After your first transaction,\n    you will be able to view it here.',
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 20),
               ),
             )
           ],

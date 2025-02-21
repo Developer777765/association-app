@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:temple_app/data/dtos/get_all_companies_dto.dart';
 import 'package:temple_app/data/dtos/get_img_dto.dart';
@@ -46,7 +47,8 @@ final updateUserProfileProvider =
     FutureProvider.family<UpdateUserProfileResDto, Map<String, dynamic>>(
         (ref, updatedProfile) async {
   final loginRep = ref.read(loginRepositoryProvider);
-  final UpdateUserProfileResDto result = await loginRep.updateProfile(updatedProfile);
+  final UpdateUserProfileResDto result =
+      await loginRep.updateProfile(updatedProfile);
   return result;
 });
 
@@ -111,8 +113,10 @@ class LoginRepository {
   Future<UserInfoResultForRegister> registerUser(
       Map<String, dynamic> userInfo) async {
     try {
-      final response = await ApiManager.post(ApiConstant.register, body: userInfo);
-      final data = UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
+      final response =
+          await ApiManager.post(ApiConstant.register, body: userInfo);
+      final data =
+          UserInfoResultForRegister.fromJson(response as Map<String, dynamic>);
       if (data.statusCode == '1') {
         return data;
       } else {
@@ -126,8 +130,10 @@ class LoginRepository {
   Future<UpdateUserProfileResDto> updateProfile(
       Map<String, dynamic> userInfo) async {
     try {
-      final response = await ApiManager.post(ApiConstant.updateProfile, body: userInfo);
-      final data = UpdateUserProfileResDto.fromJson(response as Map<String, dynamic>);
+      final response =
+          await ApiManager.post(ApiConstant.updateProfile, body: userInfo);
+      final data =
+          UpdateUserProfileResDto.fromJson(response as Map<String, dynamic>);
       return data;
     } catch (ex) {
       rethrow;
@@ -261,7 +267,6 @@ class LoginRepository {
     try {
       final result =
           await http.get(Uri.parse(ApiConstant.getPostalAddress + postalCode));
-
       if (result.statusCode == 200) {
         final responseJson = json.decode(result.body);
         return responseJson;

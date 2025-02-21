@@ -128,6 +128,9 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ),
                               onPressed: () async {
                                 try {
+                                  //TODO: testing for uplod/edit picture
+                                  ref.read(imageFileProvider.notifier).state = null;
+                                  //TODO: testing for uplod/edit picture
                                   String url = await getImageUrl();
                                   debugPrint('profile picture url is $url');
                                   Navigator.push(

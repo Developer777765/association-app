@@ -35,6 +35,11 @@ final changeCityBlock = StateProvider<bool>((ref) {
   return false;
 });
 
+final imageFileProvider = StateProvider<File?>((ref) {
+  // return File('');
+  return null;
+});
+
 class Profile {
   String? userName;
   String? mobileNo;
@@ -77,7 +82,7 @@ class SignUpState extends ConsumerState<SignUp> {
   int day = 01;
   List<String> genders = ['Male', 'Female', 'Other'];
   String completeAddress = '';
-  File? profilePic;
+  // File? profilePic; //TODO: temporary image pic change
   bool hasNetworkChanged = true;
   String cityBlockDisitrict = '';
   List<dynamic>? postOfficesOfEditProfile;
@@ -95,6 +100,7 @@ class SignUpState extends ConsumerState<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    File? profilePic = ref.watch(imageFileProvider);
     bool hasCityBlockChanged = ref.watch(changeCityBlock);
     var checkNetworkStatus = ref.watch(networkStatusProvider);
     bool isUserMarried = ref.watch(maritalStatusProvider);
@@ -148,12 +154,12 @@ class SignUpState extends ConsumerState<SignUp> {
                   Text(
                     widget.isItSignUp
                         ? 'Enter Your Personal Data to Create One'
-                        : '',
+                        : 'Keep it up to date',
                     style: const TextStyle(
                         color: Colors.grey, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
                   GestureDetector(
                     onTap: () async {
@@ -168,7 +174,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                   null // Show selected image if available
                               ? ClipOval(
                                   child: Image.file(
-                                    profilePic!,
+                                    profilePic,
                                     width: 140,
                                     height: 140,
                                     fit: BoxFit.cover,
@@ -190,8 +196,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                             fit: BoxFit.cover,
                                           ),
                                         )
-                                      : const Icon(Icons
-                                          .person_sharp), // Show default if no profile pic
+                                      : const Icon(Icons.person_sharp),
                         ),
                         const Positioned(
                             top: 105,
@@ -515,6 +520,7 @@ class SignUpState extends ConsumerState<SignUp> {
                           //TODO: disabled for now(photo upload)
                           //###################disabled for now######################
                         } else {
+                          uniqueIdOfPic = userEditProfile?.profilePic;
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text('No picture selected'),
@@ -674,6 +680,10 @@ class SignUpState extends ConsumerState<SignUp> {
                                       updateUserProfileProvider(userReq)
                                           .future);
                                   if (val.status == '200') {
+                                    //TODO: testing for uplod/edit picture
+                                    ref.read(imageFileProvider.notifier).state =
+                                        null;
+                                    //TODO: testing for uplod/edit picture
                                     ref.read(changeCityBlock.notifier).state =
                                         false;
                                     var personBox =
@@ -712,7 +722,7 @@ class SignUpState extends ConsumerState<SignUp> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content:
-                                              Text('Registration failed!')),
+                                              Text('Profile upate failed!')),
                                     );
                                   }
                                 } else {
@@ -842,29 +852,30 @@ class SignUpState extends ConsumerState<SignUp> {
     }
   }
 
-  update() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    File file = File(image!.path);
-    if (image == null) return;
-    String fileExtension = image.path.split('.').last.toLowerCase();
-    ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
-        companyId: 1046, //
-        category: "picture", //
-        companyName: "Assocy", //
-        createdBy: "user", //
-        fileType: fileExtension, //
-        keyId: 15, //
-        keyValue: "person picture", //
-        path: "imagePath", //
-        unitId: '17', //
-        fileName: image.name, //
-        uploadFile: file);
-    ref.read(profilePictureProvider.notifier).state = profilePicture;
-    final imagePath = File(image.path);
-    setState(() {
-      profilePic = imagePath;
-    });
-  }
+  // update() async {
+  //   final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   File file = File(image!.path);
+  //   if (image == null) return;
+  //   String fileExtension = image.path.split('.').last.toLowerCase();
+  //   ProfilePicUploadReq profilePicture = ProfilePicUploadReq(
+  //       companyId: 1046, //
+  //       category: "picture", //
+  //       companyName: "Assocy", //
+  //       createdBy: "user", //
+  //       fileType: fileExtension, //
+  //       keyId: 15, //
+  //       keyValue: "person picture", //
+  //       path: "imagePath", //
+  //       unitId: '17', //
+  //       fileName: image.name, //
+  //       uploadFile: file);
+  //   ref.read(profilePictureProvider.notifier).state = profilePicture;
+  //   final image = File(image.path);
+  //   ref.read(imageFileProvider.notifier).state = image;
+  //   // setState(() {
+  //   //   profilePic = imagePath;
+  //   // });
+  // }
 
   filePicker() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -886,10 +897,11 @@ class SignUpState extends ConsumerState<SignUp> {
         fileName: result.files.single.name, //
         uploadFile: file);
     ref.read(profilePictureProvider.notifier).state = profilePicture;
-    final imagePath = File(file.path);
-    setState(() {
-      profilePic = imagePath;
-    });
+    final image = File(file.path);
+    ref.read(imageFileProvider.notifier).state = image;
+    // setState(() {
+    //   profilePic = image;
+    // });
   }
 
   separateAddress(String completeAddress) {
@@ -959,6 +971,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        Navigator.pop(context);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -980,6 +993,7 @@ class SignUpState extends ConsumerState<SignUp> {
                     const Spacer(),
                     GestureDetector(
                       onTap: () async {
+                        Navigator.pop(context);
                         await pickImage();
                       },
                       child: const SizedBox(

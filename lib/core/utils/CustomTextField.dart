@@ -65,13 +65,7 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
   @override
   void initState() {
     super.initState();
-    ////////////////Disabled for now////////////////
-    // controller = TextEditingController();
-    ////////////////Disabled for now////////////////
-    // Use the passed controller, or create a new one if it's null
     controller = widget.controller ?? TextEditingController();
-
-    // If widget.controller was provided, don't overwrite it with a new instance
     if (widget.controller != null && widget.controller!.text.isNotEmpty) {
       controller.text = widget.controller!.text;
     }
@@ -79,7 +73,6 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
 
   @override
   void dispose() {
-    // Dispose controller to avoid memory leaks
     controller.dispose();
     super.dispose();
   }
@@ -99,9 +92,10 @@ class CustomTextFieldState extends ConsumerState<CustomTextField> {
             onChanged: (val) async {
               if (widget.label == 'PinCode') {
                 if (val.length == 6) {
+                  debugPrint('we are inside of postal code API');
                   var result =
                       await LoginRepository().getPostalCodeDetails(val);
-
+                  debugPrint('API has been triggered');
                   List postOffices = result['PostOffice'];
                   var cities = List.generate(postOffices.length, (index) {
                     return '${postOffices[index]['Name']}, ${postOffices[index]['Taluk']}, ${postOffices[index]['District']}';

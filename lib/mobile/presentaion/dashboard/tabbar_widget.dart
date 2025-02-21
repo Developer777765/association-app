@@ -31,10 +31,15 @@ class _TabbarWidgetState extends ConsumerState<TabbarWidget> {
     Transactions(),
 
     ProfileScreen(),
-    Text(
-      'Under Implementation',
-      style: optionStyle,
-    ),
+    // Text(
+    //   'Under Implementation',
+    //   style: optionStyle,
+    // ),
+    Center(
+        child: Icon(
+      Icons.warning_amber_rounded,
+      size: 60,
+    ))
   ];
 
   @override
